@@ -41,6 +41,32 @@
     z-index: 200;
     flex-wrap: nowrap;
   }
+  /* On small screens: two-row layout */
+  @media (max-width: 699px) {
+    .topbar {
+      height: auto;
+      flex-wrap: wrap;
+      padding: 8px 1rem;
+      gap: 0;
+      row-gap: 6px;
+    }
+    .topbar .logo {
+      flex: 1 1 100%;
+      font-size: 14px;
+    }
+    .topbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      justify-content: flex-end;
+    }
+    /* Push mobile-nav down to account for two-row topbar */
+    .mobile-nav {
+      top: 88px;
+    }
+    /* Content also needs offset for taller topbar */
+  }
   .logo {
     font-family: 'Cinzel', serif;
     font-size: 15px;
@@ -51,15 +77,31 @@
     text-shadow: 0 0 20px rgba(212,160,23,0.4);
     flex-shrink: 0;
   }
-  .logo span { display: none; }
-  @media (min-width: 600px) {
-    .logo span { display: inline; color: var(--text); font-weight: 400; font-size: 13px; margin-left: 6px; }
-  }
+  .logo span { color: var(--text); font-weight: 400; font-size: 12px; margin-left: 6px; opacity: 0.7; }
 
   /* Desktop nav */
   .nav { display: none; gap: 2px; margin-left: auto; }
   @media (min-width: 700px) {
     .nav { display: flex; }
+  }
+  /* topbar-controls: inline on desktop, full-width second row on mobile */
+  .topbar-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  @media (max-width: 699px) {
+    .topbar-controls {
+      width: 100%;
+      justify-content: flex-end;
+      padding-bottom: 4px;
+    }
+    /* desktop nav steals margin-left on desktop; on mobile the controls row handles spacing */
+    .nav { margin-left: 0; }
+  }
+  @media (min-width: 700px) {
+    .topbar-controls { margin-left: 8px; }
   }
   .nav-btn {
     background: none;
@@ -115,6 +157,9 @@
     z-index: 199;
     padding: 8px 0 10px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  @media (max-width: 699px) {
+    .mobile-nav { top: 88px; }
   }
   .mobile-nav.open { display: block; }
   @media (min-width: 700px) {
@@ -785,7 +830,7 @@
   <div class="logo">
     ⚔ Rush Royale<span>Unofficial Portal</span>
   </div>
-  <!-- Desktop nav -->
+  <!-- Desktop nav (hidden on mobile) -->
   <div class="nav">
     <button class="nav-btn active" id="nav-overview" onclick="showPage('overview',this)" data-key="nav_overview">Overview</button>
     <button class="nav-btn" id="nav-clans" onclick="showPage('clans',this)" data-key="nav_clans">Committed Clans</button>
@@ -794,28 +839,31 @@
     <button class="nav-btn" id="nav-chat" onclick="showPage('chat',this)" data-key="nav_chat">Chat</button>
     <button class="nav-btn" id="nav-admin" onclick="showPage('admin',this)" style="display:none" data-key="nav_admin">Admin</button>
   </div>
-  <div id="user-info-bar"></div>
-  <!-- Language Selector -->
-  <div style="position:relative;flex-shrink:0">
-    <button class="lang-selector-btn" id="lang-selector-btn" onclick="toggleLangDropdown()">
-      <span class="lang-flag" id="lang-flag">🇬🇧</span>
-      <span id="lang-code-display">EN</span>
-      <span style="font-size:9px;opacity:0.6">▼</span>
-    </button>
-    <div class="lang-dropdown" id="lang-dropdown">
-      <button class="lang-opt selected" onclick="setLang('EN','🇬🇧','English')"><span class="lang-opt-flag">🇬🇧</span><span class="lang-opt-code">EN</span><span class="lang-opt-name">English</span></button>
-      <button class="lang-opt" onclick="setLang('RU','🇷🇺','Русский')"><span class="lang-opt-flag">🇷🇺</span><span class="lang-opt-code">RU</span><span class="lang-opt-name">Русский</span></button>
-      <button class="lang-opt" onclick="setLang('DE','🇩🇪','Deutsch')"><span class="lang-opt-flag">🇩🇪</span><span class="lang-opt-code">DE</span><span class="lang-opt-name">Deutsch</span></button>
-      <button class="lang-opt" onclick="setLang('ES','🇪🇸','Español')"><span class="lang-opt-flag">🇪🇸</span><span class="lang-opt-code">ES</span><span class="lang-opt-name">Español</span></button>
-      <button class="lang-opt" onclick="setLang('FR','🇫🇷','Français')"><span class="lang-opt-flag">🇫🇷</span><span class="lang-opt-code">FR</span><span class="lang-opt-name">Français</span></button>
-      <button class="lang-opt" onclick="setLang('IT','🇮🇹','Italiano')"><span class="lang-opt-flag">🇮🇹</span><span class="lang-opt-code">IT</span><span class="lang-opt-name">Italiano</span></button>
-      <button class="lang-opt" onclick="setLang('ZH','🇨🇳','中文')"><span class="lang-opt-flag">🇨🇳</span><span class="lang-opt-code">ZH</span><span class="lang-opt-name">中文</span></button>
+  <!-- Controls: user chip + lang selector + hamburger -->
+  <div class="topbar-controls">
+    <div id="user-info-bar"></div>
+    <!-- Language Selector -->
+    <div style="position:relative;flex-shrink:0">
+      <button class="lang-selector-btn" id="lang-selector-btn" onclick="toggleLangDropdown()">
+        <span class="lang-flag" id="lang-flag">🇬🇧</span>
+        <span id="lang-code-display">EN</span>
+        <span style="font-size:9px;opacity:0.6">▼</span>
+      </button>
+      <div class="lang-dropdown" id="lang-dropdown">
+        <button class="lang-opt selected" onclick="setLang('EN','🇬🇧','English')"><span class="lang-opt-flag">🇬🇧</span><span class="lang-opt-code">EN</span><span class="lang-opt-name">English</span></button>
+        <button class="lang-opt" onclick="setLang('RU','🇷🇺','Русский')"><span class="lang-opt-flag">🇷🇺</span><span class="lang-opt-code">RU</span><span class="lang-opt-name">Русский</span></button>
+        <button class="lang-opt" onclick="setLang('DE','🇩🇪','Deutsch')"><span class="lang-opt-flag">🇩🇪</span><span class="lang-opt-code">DE</span><span class="lang-opt-name">Deutsch</span></button>
+        <button class="lang-opt" onclick="setLang('ES','🇪🇸','Español')"><span class="lang-opt-flag">🇪🇸</span><span class="lang-opt-code">ES</span><span class="lang-opt-name">Español</span></button>
+        <button class="lang-opt" onclick="setLang('FR','🇫🇷','Français')"><span class="lang-opt-flag">🇫🇷</span><span class="lang-opt-code">FR</span><span class="lang-opt-name">Français</span></button>
+        <button class="lang-opt" onclick="setLang('IT','🇮🇹','Italiano')"><span class="lang-opt-flag">🇮🇹</span><span class="lang-opt-code">IT</span><span class="lang-opt-name">Italiano</span></button>
+        <button class="lang-opt" onclick="setLang('ZH','🇨🇳','中文')"><span class="lang-opt-flag">🇨🇳</span><span class="lang-opt-code">ZH</span><span class="lang-opt-name">中文</span></button>
+      </div>
     </div>
+    <!-- Hamburger — mobile only -->
+    <button class="hamburger" id="hamburger-btn" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  <!-- Hamburger — mobile only -->
-  <button class="hamburger" id="hamburger-btn" onclick="toggleMobileNav()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
 </div>
 
 <!-- Mobile nav drawer -->
