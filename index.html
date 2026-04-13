@@ -92,12 +92,25 @@
     flex-shrink: 0;
   }
   .topbar-controls #user-info-bar { flex: 1; min-width: 0; }
+  /* Stack lang + hamburger vertically on mobile */
+  .topbar-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  @media (min-width: 700px) {
+    .topbar-right { flex-direction: row; gap: 6px; }
+  }
   @media (max-width: 699px) {
     .topbar-controls {
       width: 100%;
       padding-bottom: 4px;
     }
     .nav { margin-left: 0; }
+    .lang-selector-btn { padding: 3px 7px; font-size: 12px; }
+    .hamburger { padding: 4px 7px; }
   }
   @media (min-width: 700px) {
     .topbar-controls { margin-left: 8px; }
@@ -127,13 +140,14 @@
     background: var(--bg3);
     border: 1px solid var(--border2);
     border-radius: 7px;
-    padding: 7px 9px;
+    padding: 6px 9px;
     cursor: pointer;
-    margin-left: auto;
     flex-shrink: 0;
+    width: 100%;
+    align-items: center;
   }
   @media (min-width: 700px) {
-    .hamburger { display: none; }
+    .hamburger { display: none; width: auto; }
   }
   .hamburger span {
     display: block;
@@ -184,18 +198,23 @@
     background: var(--bg3);
     border: 1px solid var(--border2);
     border-radius: 8px;
-    padding: 5px 10px;
+    padding: 4px 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 13px;
+    gap: 4px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--gold);
     font-family: 'Inter', sans-serif;
     transition: all 0.15s;
     white-space: nowrap;
     flex-shrink: 0;
+    width: 100%;
+    justify-content: center;
+  }
+  @media (min-width: 700px) {
+    .lang-selector-btn { width: auto; padding: 5px 10px; font-size: 13px; gap: 5px; }
   }
   .lang-selector-btn:hover { background: var(--bg4); border-color: var(--gold); }
   .lang-flag { font-size: 18px; line-height: 1; }
@@ -698,8 +717,6 @@
     padding: 2px 7px; border-radius: 20px; font-size: 11px;
     font-weight: 600; white-space: nowrap; flex-shrink: 0;
   }
-  .auth-platform-badge .badge-label { display: none; }
-  @media (min-width: 480px) { .auth-platform-badge .badge-label { display: inline; } }
   .badge-discord { background: rgba(88,101,242,0.15); color: #7289da; border: 1px solid rgba(88,101,242,0.3); }
   .badge-tg      { background: rgba(41,128,185,0.12); color: #5dade2; border: 1px solid rgba(41,128,185,0.25); }
 
@@ -707,28 +724,37 @@
   #user-info-bar {
     display: none;
     align-items: center;
-    flex-shrink: 1;
+    flex: 1;
     min-width: 0;
   }
   .user-chip {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     background: var(--bg3);
     border: 1px solid var(--border2);
     border-radius: 20px;
-    padding: 4px 6px 4px 10px;
-    font-size: 12px;
-    color: var(--text2);
+    padding: 4px 5px 4px 8px;
+    max-width: 100%;
     min-width: 0;
-    max-width: 220px;
+    overflow: hidden;
   }
-  @media (max-width: 699px) {
-    .user-chip { max-width: 160px; }
+  .user-chip-platform {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
   }
   .user-chip-name {
+    font-size: 11px;
+    font-weight: 600;
     color: var(--text);
-    font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -736,20 +762,22 @@
     min-width: 0;
   }
   .user-chip-admin {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
     background: rgba(212,160,23,0.15);
     color: var(--gold);
     border: 1px solid rgba(212,160,23,0.3);
     border-radius: 20px;
-    padding: 1px 6px;
+    padding: 2px 6px;
     font-size: 10px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     white-space: nowrap;
     flex-shrink: 0;
+    letter-spacing: 0.02em;
   }
   .btn-signout {
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.07);
     border: none;
     border-radius: 50%;
     width: 20px;
@@ -757,15 +785,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 9px;
     color: var(--text3);
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: all 0.15s;
     flex-shrink: 0;
     padding: 0;
+    line-height: 1;
   }
-  .btn-signout:hover { background: rgba(192,57,43,0.25); color: #e74c3c; }
+  .btn-signout:hover { background: rgba(192,57,43,0.3); color: #e74c3c; }
 
   /* ── Boycott notice ─────────────────────────────────────────────────────── */
   .boycott-banner {
@@ -871,30 +900,32 @@
     <button class="nav-btn" id="nav-chat" onclick="showPage('chat',this)" data-key="nav_chat">Chat</button>
     <button class="nav-btn" id="nav-admin" onclick="showPage('admin',this)" style="display:none" data-key="nav_admin">Admin</button>
   </div>
-  <!-- Controls: user chip + lang selector + hamburger -->
+  <!-- Controls: user chip + [lang above hamburger] -->
   <div class="topbar-controls">
     <div id="user-info-bar"></div>
-    <!-- Language Selector -->
-    <div style="position:relative;flex-shrink:0">
-      <button class="lang-selector-btn" id="lang-selector-btn" onclick="toggleLangDropdown()">
-        <span class="lang-flag" id="lang-flag">🇬🇧</span>
-        <span id="lang-code-display">EN</span>
-        <span style="font-size:9px;opacity:0.6">▼</span>
-      </button>
-      <div class="lang-dropdown" id="lang-dropdown">
-        <button class="lang-opt selected" onclick="setLang('EN','🇬🇧','English')"><span class="lang-opt-flag">🇬🇧</span><span class="lang-opt-code">EN</span><span class="lang-opt-name">English</span></button>
-        <button class="lang-opt" onclick="setLang('RU','🇷🇺','Русский')"><span class="lang-opt-flag">🇷🇺</span><span class="lang-opt-code">RU</span><span class="lang-opt-name">Русский</span></button>
-        <button class="lang-opt" onclick="setLang('DE','🇩🇪','Deutsch')"><span class="lang-opt-flag">🇩🇪</span><span class="lang-opt-code">DE</span><span class="lang-opt-name">Deutsch</span></button>
-        <button class="lang-opt" onclick="setLang('ES','🇪🇸','Español')"><span class="lang-opt-flag">🇪🇸</span><span class="lang-opt-code">ES</span><span class="lang-opt-name">Español</span></button>
-        <button class="lang-opt" onclick="setLang('FR','🇫🇷','Français')"><span class="lang-opt-flag">🇫🇷</span><span class="lang-opt-code">FR</span><span class="lang-opt-name">Français</span></button>
-        <button class="lang-opt" onclick="setLang('IT','🇮🇹','Italiano')"><span class="lang-opt-flag">🇮🇹</span><span class="lang-opt-code">IT</span><span class="lang-opt-name">Italiano</span></button>
-        <button class="lang-opt" onclick="setLang('ZH','🇨🇳','中文')"><span class="lang-opt-flag">🇨🇳</span><span class="lang-opt-code">ZH</span><span class="lang-opt-name">中文</span></button>
+    <div class="topbar-right">
+      <!-- Language Selector -->
+      <div style="position:relative">
+        <button class="lang-selector-btn" id="lang-selector-btn" onclick="toggleLangDropdown()">
+          <span class="lang-flag" id="lang-flag">🇬🇧</span>
+          <span id="lang-code-display">EN</span>
+          <span style="font-size:9px;opacity:0.6">▼</span>
+        </button>
+        <div class="lang-dropdown" id="lang-dropdown">
+          <button class="lang-opt selected" onclick="setLang('EN','🇬🇧','English')"><span class="lang-opt-flag">🇬🇧</span><span class="lang-opt-code">EN</span><span class="lang-opt-name">English</span></button>
+          <button class="lang-opt" onclick="setLang('RU','🇷🇺','Русский')"><span class="lang-opt-flag">🇷🇺</span><span class="lang-opt-code">RU</span><span class="lang-opt-name">Русский</span></button>
+          <button class="lang-opt" onclick="setLang('DE','🇩🇪','Deutsch')"><span class="lang-opt-flag">🇩🇪</span><span class="lang-opt-code">DE</span><span class="lang-opt-name">Deutsch</span></button>
+          <button class="lang-opt" onclick="setLang('ES','🇪🇸','Español')"><span class="lang-opt-flag">🇪🇸</span><span class="lang-opt-code">ES</span><span class="lang-opt-name">Español</span></button>
+          <button class="lang-opt" onclick="setLang('FR','🇫🇷','Français')"><span class="lang-opt-flag">🇫🇷</span><span class="lang-opt-code">FR</span><span class="lang-opt-name">Français</span></button>
+          <button class="lang-opt" onclick="setLang('IT','🇮🇹','Italiano')"><span class="lang-opt-flag">🇮🇹</span><span class="lang-opt-code">IT</span><span class="lang-opt-name">Italiano</span></button>
+          <button class="lang-opt" onclick="setLang('ZH','🇨🇳','中文')"><span class="lang-opt-flag">🇨🇳</span><span class="lang-opt-code">ZH</span><span class="lang-opt-name">中文</span></button>
+        </div>
       </div>
+      <!-- Hamburger — mobile only -->
+      <button class="hamburger" id="hamburger-btn" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-    <!-- Hamburger — mobile only -->
-    <button class="hamburger" id="hamburger-btn" onclick="toggleMobileNav()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
   </div>
 </div>
 
@@ -2274,10 +2305,10 @@ function _startSession(payload) {
     ? '<span class="user-chip-admin">👑 Admin</span>' : '';
   bar.innerHTML = `
     <div class="user-chip">
-      ${platformBadge}
+      <span class="user-chip-platform ${payload.platform === 'discord' ? 'badge-discord' : 'badge-tg'}">${payload.platform === 'discord' ? '⚡ Discord' : '✈ Telegram'}</span>
       <span class="user-chip-name">${payload.uname}</span>
-      ${adminBadge}
-      <button class="btn-signout" onclick="signOut()">✕</button>
+      ${payload.admin ? '<span class="user-chip-admin">👑 Admin</span>' : ''}
+      <button class="btn-signout" onclick="signOut()" title="Sign out">✕</button>
     </div>`;
   bar.style.display = 'flex';
   // Dismiss the gate
