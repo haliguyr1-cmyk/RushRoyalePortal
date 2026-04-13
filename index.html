@@ -617,7 +617,7 @@
       On <span class="auth-platform-badge badge-tg">Telegram</span> send
       <code style="background:var(--bg4);padding:1px 5px;border-radius:3px">/portal</code>
       in the group.<br><br>
-      The bot will reply privately with a link valid for <strong>1 hour</strong>.
+      The bot will reply privately with a unique link valid for <strong>1 hour</strong>.<br>The link opens: <code style="background:var(--bg4);padding:1px 5px;border-radius:3px;font-size:11px">https://rush-royale-portal.vercel.app</code>
     </div>
   </div>
 </div>
@@ -1094,6 +1094,17 @@
 </div><!-- /content -->
 
 <script>
+// ══════════════════════════════════════════════════════════════
+// PORTAL CONFIGURATION — edit these two values after deployment
+// ══════════════════════════════════════════════════════════════
+// PORTAL_SECRET must exactly match the PORTAL_SECRET env var set on your bot.
+// Pick any long random string and use it in both places.
+const _PORTAL_SECRET = 'change_me_in_production';
+//
+// PORTAL_URL is the address of this file — used in bot DM messages.
+const _PORTAL_URL = 'https://rush-royale-portal.vercel.app';
+// ══════════════════════════════════════════════════════════════
+
 // ── Language data ──────────────────────────────────────────────────────────
 const LANGS = {
   EN: { flag: '🇬🇧', name: 'English', color: '#378ADD' },
