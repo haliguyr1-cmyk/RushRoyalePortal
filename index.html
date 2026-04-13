@@ -91,13 +91,12 @@
     gap: 8px;
     flex-shrink: 0;
   }
+  .topbar-controls #user-info-bar { flex: 1; min-width: 0; }
   @media (max-width: 699px) {
     .topbar-controls {
       width: 100%;
-      justify-content: flex-end;
       padding-bottom: 4px;
     }
-    /* desktop nav steals margin-left on desktop; on mobile the controls row handles spacing */
     .nav { margin-left: 0; }
   }
   @media (min-width: 700px) {
@@ -185,18 +184,18 @@
     background: var(--bg3);
     border: 1px solid var(--border2);
     border-radius: 8px;
-    padding: 5px 12px;
+    padding: 5px 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 5px;
     font-size: 13px;
     font-weight: 600;
     color: var(--gold);
     font-family: 'Inter', sans-serif;
     transition: all 0.15s;
-    margin-left: 8px;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .lang-selector-btn:hover { background: var(--bg4); border-color: var(--gold); }
   .lang-flag { font-size: 18px; line-height: 1; }
@@ -695,45 +694,78 @@
   }
   .auth-how strong { color: var(--text); }
   .auth-platform-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 3px 10px; border-radius: 20px; font-size: 11px;
-    font-weight: 600; margin: 0 3px;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 7px; border-radius: 20px; font-size: 11px;
+    font-weight: 600; white-space: nowrap; flex-shrink: 0;
   }
+  .auth-platform-badge .badge-label { display: none; }
+  @media (min-width: 480px) { .auth-platform-badge .badge-label { display: inline; } }
   .badge-discord { background: rgba(88,101,242,0.15); color: #7289da; border: 1px solid rgba(88,101,242,0.3); }
   .badge-tg      { background: rgba(41,128,185,0.12); color: #5dade2; border: 1px solid rgba(41,128,185,0.25); }
 
   /* ── User info bar ──────────────────────────────────────────────────────── */
   #user-info-bar {
     display: none;
-    align-items: center; gap: 6px;
+    align-items: center;
     flex-shrink: 1;
     min-width: 0;
   }
   .user-chip {
-    display: flex; align-items: center; gap: 5px;
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 20px; padding: 4px 10px;
-    font-size: 12px; color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 4px 6px 4px 10px;
+    font-size: 12px;
+    color: var(--text2);
+    min-width: 0;
+    max-width: 220px;
+  }
+  @media (max-width: 699px) {
+    .user-chip { max-width: 160px; }
+  }
+  .user-chip-name {
+    color: var(--text);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
     min-width: 0;
   }
-  .user-chip-name { color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
-  @media (min-width: 480px) { .user-chip-name { max-width: 140px; } }
   .user-chip-admin {
-    background: rgba(212,160,23,0.12); color: var(--gold);
+    background: rgba(212,160,23,0.15);
+    color: var(--gold);
     border: 1px solid rgba(212,160,23,0.3);
-    border-radius: 20px; padding: 2px 8px;
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.06em;
+    border-radius: 20px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .btn-signout {
-    background: none; border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 6px; padding: 4px 8px;
-    font-size: 11px; color: var(--text3);
-    cursor: pointer; font-family: 'Inter', sans-serif;
-    transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+    background: rgba(255,255,255,0.06);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--text3);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    padding: 0;
   }
-  .btn-signout:hover { color: var(--text); border-color: var(--border2); }
+  .btn-signout:hover { background: rgba(192,57,43,0.25); color: #e74c3c; }
 
   /* ── Boycott notice ─────────────────────────────────────────────────────── */
   .boycott-banner {
@@ -2236,8 +2268,8 @@ function _startSession(payload) {
   // Render user chip in topbar
   const bar = document.getElementById('user-info-bar');
   const platformBadge = payload.platform === 'discord'
-    ? '<span class="auth-platform-badge badge-discord">⚡ Discord</span>'
-    : '<span class="auth-platform-badge badge-tg">✈ Telegram</span>';
+    ? '<span class="auth-platform-badge badge-discord">⚡<span class="badge-label"> Discord</span></span>'
+    : '<span class="auth-platform-badge badge-tg">✈<span class="badge-label"> Telegram</span></span>';
   const adminBadge = payload.admin
     ? '<span class="user-chip-admin">👑 Admin</span>' : '';
   bar.innerHTML = `
@@ -2245,8 +2277,8 @@ function _startSession(payload) {
       ${platformBadge}
       <span class="user-chip-name">${payload.uname}</span>
       ${adminBadge}
-    </div>
-    <button class="btn-signout" onclick="signOut()">Sign out</button>`;
+      <button class="btn-signout" onclick="signOut()">✕</button>
+    </div>`;
   bar.style.display = 'flex';
   // Dismiss the gate
   document.getElementById('auth-gate').style.display = 'none';
