@@ -31,40 +31,108 @@
   .topbar {
     background: var(--bg2);
     border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
+    padding: 0 1rem;
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 0.75rem;
     height: 58px;
     position: sticky;
     top: 0;
     z-index: 200;
+    flex-wrap: nowrap;
   }
   .logo {
     font-family: 'Cinzel', serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--gold);
     letter-spacing: 0.05em;
     white-space: nowrap;
     text-shadow: 0 0 20px rgba(212,160,23,0.4);
+    flex-shrink: 0;
   }
-  .logo span { color: var(--text); font-weight: 400; font-size: 13px; margin-left: 6px; }
-  .nav { display: flex; gap: 2px; margin-left: auto; }
+  .logo span { display: none; }
+  @media (min-width: 600px) {
+    .logo span { display: inline; color: var(--text); font-weight: 400; font-size: 13px; margin-left: 6px; }
+  }
+
+  /* Desktop nav */
+  .nav { display: none; gap: 2px; margin-left: auto; }
+  @media (min-width: 700px) {
+    .nav { display: flex; }
+  }
   .nav-btn {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 7px 16px;
+    padding: 7px 12px;
     border-radius: 6px;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
     color: var(--text2);
     transition: all 0.15s;
     font-weight: 400;
+    white-space: nowrap;
   }
   .nav-btn:hover { background: var(--bg3); color: var(--text); }
   .nav-btn.active { background: rgba(212,160,23,0.12); color: var(--gold); font-weight: 500; }
+
+  /* Hamburger button — mobile only */
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 7px;
+    padding: 7px 9px;
+    cursor: pointer;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  @media (min-width: 700px) {
+    .hamburger { display: none; }
+  }
+  .hamburger span {
+    display: block;
+    width: 18px; height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  /* Mobile drawer */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    top: 58px; left: 0; right: 0;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border2);
+    z-index: 199;
+    padding: 8px 0 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .mobile-nav.open { display: block; }
+  @media (min-width: 700px) {
+    .mobile-nav { display: none !important; }
+  }
+  .mobile-nav .nav-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 11px 20px;
+    border-radius: 0;
+    font-size: 14px;
+  }
+  .mobile-nav .nav-btn.active {
+    background: rgba(212,160,23,0.1);
+    border-left: 3px solid var(--gold);
+    padding-left: 17px;
+  }
 
   /* Language selector button */
   .lang-selector-btn {
@@ -123,7 +191,7 @@
   .lang-opt-name { font-size: 12px; }
 
   /* Layout */
-  .content { max-width: 1140px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .content { max-width: 1140px; margin: 0 auto; padding: 1.25rem 1rem; }
   .page { display: none; }
   .page.active { display: block; }
   .page-title {
@@ -134,8 +202,12 @@
     margin-bottom: 1.5rem;
     letter-spacing: 0.03em;
   }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+  .grid2 { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (min-width: 600px) {
+    .grid2 { grid-template-columns: 1fr 1fr; }
+    .grid3 { grid-template-columns: 1fr 1fr 1fr; }
+  }
 
   /* Cards */
   .card {
@@ -277,7 +349,13 @@
   .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
 
   /* Chat layout */
-  .chat-layout { display: grid; grid-template-columns: 230px 1fr; gap: 1rem; height: 560px; }
+  .chat-layout { display: grid; grid-template-columns: 1fr; gap: 1rem; height: auto; }
+  @media (min-width: 600px) {
+    .chat-layout { grid-template-columns: 200px 1fr; height: 560px; }
+  }
+  .channel-list { max-height: 200px; }
+  @media (min-width: 600px) { .channel-list { max-height: none; } }
+  .chat-panel { min-height: 380px; }
   .channel-list {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -582,29 +660,33 @@
   /* ── User info bar ──────────────────────────────────────────────────────── */
   #user-info-bar {
     display: none;
-    align-items: center; gap: 10px;
-    margin-left: 12px;
+    align-items: center; gap: 6px;
+    flex-shrink: 1;
+    min-width: 0;
   }
   .user-chip {
-    display: flex; align-items: center; gap: 7px;
+    display: flex; align-items: center; gap: 5px;
     background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 20px; padding: 4px 12px;
+    border-radius: 20px; padding: 4px 10px;
     font-size: 12px; color: var(--text2);
+    min-width: 0;
   }
-  .user-chip-name { color: var(--text); font-weight: 500; }
+  .user-chip-name { color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+  @media (min-width: 480px) { .user-chip-name { max-width: 140px; } }
   .user-chip-admin {
     background: rgba(212,160,23,0.12); color: var(--gold);
     border: 1px solid rgba(212,160,23,0.3);
     border-radius: 20px; padding: 2px 8px;
     font-size: 10px; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.06em;
+    white-space: nowrap;
   }
   .btn-signout {
     background: none; border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 6px; padding: 4px 10px;
+    border-radius: 6px; padding: 4px 8px;
     font-size: 11px; color: var(--text3);
     cursor: pointer; font-family: 'Inter', sans-serif;
-    transition: all 0.15s;
+    transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
   }
   .btn-signout:hover { color: var(--text); border-color: var(--border2); }
 
@@ -703,6 +785,7 @@
   <div class="logo">
     ⚔ Rush Royale<span>Unofficial Portal</span>
   </div>
+  <!-- Desktop nav -->
   <div class="nav">
     <button class="nav-btn active" id="nav-overview" onclick="showPage('overview',this)" data-key="nav_overview">Overview</button>
     <button class="nav-btn" id="nav-clans" onclick="showPage('clans',this)" data-key="nav_clans">Committed Clans</button>
@@ -713,7 +796,7 @@
   </div>
   <div id="user-info-bar"></div>
   <!-- Language Selector -->
-  <div style="position:relative">
+  <div style="position:relative;flex-shrink:0">
     <button class="lang-selector-btn" id="lang-selector-btn" onclick="toggleLangDropdown()">
       <span class="lang-flag" id="lang-flag">🇬🇧</span>
       <span id="lang-code-display">EN</span>
@@ -729,6 +812,20 @@
       <button class="lang-opt" onclick="setLang('ZH','🇨🇳','中文')"><span class="lang-opt-flag">🇨🇳</span><span class="lang-opt-code">ZH</span><span class="lang-opt-name">中文</span></button>
     </div>
   </div>
+  <!-- Hamburger — mobile only -->
+  <button class="hamburger" id="hamburger-btn" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-nav" id="mobile-nav">
+  <button class="nav-btn active" id="mob-nav-overview" onclick="showPageMobile('overview')" data-key="nav_overview">Overview</button>
+  <button class="nav-btn" id="mob-nav-clans" onclick="showPageMobile('clans')" data-key="nav_clans">Committed Clans</button>
+  <button class="nav-btn" id="mob-nav-action" onclick="showPageMobile('action')" data-key="nav_action">Action Plan</button>
+  <button class="nav-btn" id="mob-nav-election" onclick="showPageMobile('election')" data-key="nav_election">Election</button>
+  <button class="nav-btn" id="mob-nav-chat" onclick="showPageMobile('chat')" data-key="nav_chat">Chat</button>
+  <button class="nav-btn" id="mob-nav-admin" onclick="showPageMobile('admin')" style="display:none" data-key="nav_admin">Admin</button>
 </div>
 
 <div class="content">
@@ -739,24 +836,24 @@
 
   <!-- Boycott Action Plan Description -->
   <div class="boycott-banner">
-    <div class="boycott-title">🚫 Draft Action Plan — The Boycott</div>
+    <div class="boycott-title">🚫 <span data-key="boycott_title">Draft Action Plan — The Boycott</span></div>
     <div class="boycott-body">
-      <p><strong>We propose a boycott of the next DPS unit.</strong></p>
-      <p>Reasons for targeting a DPS rather than a support:</p>
+      <p><strong data-key="boycott_intro">We propose a boycott of the next DPS unit.</strong></p>
+      <p data-key="boycott_reasons_lbl">Reasons for targeting a DPS rather than a support:</p>
       <ul>
-        <li>Gives us time to get as many clans and players on board as possible — Truffle's release is too soon to organise mass collective action.</li>
-        <li>Easier to persuade players to boycott a DPS than a support unit.</li>
-        <li>Most players will eventually obtain Truffle; boycotting its event means players pay <em>more</em> for it, which would <em>increase</em> dev profit — the opposite of our goal.</li>
+        <li data-key="boycott_r1">Gives us time to get as many clans and players on board as possible — Truffle's release is too soon to organise mass collective action.</li>
+        <li data-key="boycott_r2">Easier to persuade players to boycott a DPS than a support unit.</li>
+        <li data-key="boycott_r3">Most players will eventually obtain Truffle; boycotting its event means players pay more for it, which would increase dev profit — the opposite of our goal.</li>
       </ul>
-      <p>Leading up to the boycott, we will submit a <strong>joint statement to the developers</strong> signed by <strong>over 100 clans</strong>, outlining our concerns and notifying them of our planned actions. This will carry a weight the devs have never seen before from the community.</p>
-      <p>On a designated date, all participating clans will ask their players to <strong>remove all decorations from their player profiles</strong> as a show of solidarity — a visible signal to devs of the strength of feeling across the entire player base.</p>
-      <p>Further actions under discussion include non-participation in Round Table events and playtests.</p>
+      <p data-key="boycott_statement">Leading up to the boycott, we will submit a <strong>joint statement to the developers</strong> signed by <strong>over 100 clans</strong>, outlining our concerns and notifying them of our planned actions. This will carry a weight the devs have never seen before from the community.</p>
+      <p data-key="boycott_decorations">On a designated date, all participating clans will ask their players to <strong>remove all decorations from their player profiles</strong> as a show of solidarity — a visible signal to devs of the strength of feeling across the entire player base.</p>
+      <p data-key="boycott_further">Further actions under discussion include non-participation in Round Table events and playtests.</p>
     </div>
     <div class="boycott-discuss">
-      <div class="boycott-discuss-title">📋 Open Discussion Points</div>
-      <div class="discuss-item"><div class="discuss-bullet"></div><div><strong>2–3 Coordinators</strong> needed to take the Action Plan to completion — ideally the most experienced long-time players among us. See the separate Coordination &amp; Planning thread.</div></div>
-      <div class="discuss-item"><div class="discuss-bullet"></div><div><strong>Target unit consensus:</strong> Do we have agreement that the boycott targets the next DPS? Vote in the designated channel.</div></div>
-      <div class="discuss-item"><div class="discuss-bullet"></div><div><strong>Player profile changes (proposed by Pample):</strong> When do they go live? Exactly what changes? Does it include a clan description banner? How long do they stay in effect? (Proposals range from a few days to the full run-up to the boycott.)</div></div>
+      <div class="boycott-discuss-title">📋 <span data-key="boycott_discuss_title">Open Discussion Points</span></div>
+      <div class="discuss-item"><div class="discuss-bullet"></div><div data-key="boycott_dp1"><strong>2–3 Coordinators</strong> needed to take the Action Plan to completion — ideally the most experienced long-time players among us. See the separate Coordination &amp; Planning thread.</div></div>
+      <div class="discuss-item"><div class="discuss-bullet"></div><div data-key="boycott_dp2"><strong>Target unit consensus:</strong> Do we have agreement that the boycott targets the next DPS? Vote in the designated channel.</div></div>
+      <div class="discuss-item"><div class="discuss-bullet"></div><div data-key="boycott_dp3"><strong>Player profile changes (proposed by Pample):</strong> When do they go live? Exactly what changes? Does it include a clan description banner? How long do they stay in effect? (Proposals range from a few days to the full run-up to the boycott.)</div></div>
     </div>
   </div>
 
@@ -865,8 +962,8 @@
     </div>
     <div class="card">
       <div class="card-title" data-key="add_edit_clan">Add / Edit Clan</div>
-      <div class="form-row"><label class="form-label" data-key="form_clan_name">Clan Name</label><input class="form-input" id="clan-name" placeholder="e.g. Shadow Royale"></div>
-      <div class="form-row"><label class="form-label" data-key="form_leader">Leader</label><input class="form-input" id="clan-leader" placeholder="Discord username"></div>
+      <div class="form-row"><label class="form-label" data-key="form_clan_name">Clan Name</label><input class="form-input" id="clan-name" placeholder="e.g. Shadow Royale" data-placeholder="ph_clan_name"></div>
+      <div class="form-row"><label class="form-label" data-key="form_leader">Leader</label><input class="form-input" id="clan-leader" placeholder="Discord username" data-placeholder="ph_discord_user"></div>
       <div class="form-row"><label class="form-label" data-key="form_members">Members</label><input class="form-input" id="clan-members" type="number" placeholder="30"></div>
       <div class="form-row"><label class="form-label" data-key="form_status">Status</label>
         <select class="form-select" id="clan-status">
@@ -881,7 +978,7 @@
           <option value="ZH">Chinese (ZH)</option>
         </select>
       </div>
-      <div class="form-row"><label class="form-label" data-key="form_notes">Notes</label><input class="form-input" id="clan-notes" placeholder="Optional notes"></div>
+      <div class="form-row"><label class="form-label" data-key="form_notes">Notes</label><input class="form-input" id="clan-notes" placeholder="Optional notes" data-placeholder="ph_optional_notes"></div>
       <button class="btn" onclick="saveClan()" data-key="save_clan">Save Clan</button>
     </div>
   </div>
@@ -1041,8 +1138,8 @@
     <div>
       <div class="card" style="margin-bottom:1rem">
         <div class="card-title" data-key="nominate_title">Submit Nomination</div>
-        <div class="form-row"><label class="form-label" data-key="nom_discord">Discord Username</label><input class="form-input" id="nom-user" placeholder="e.g. CurbStompX"></div>
-        <div class="form-row"><label class="form-label" data-key="nom_clan">Clan</label><input class="form-input" id="nom-clan" placeholder="e.g. Shadow Royale"></div>
+        <div class="form-row"><label class="form-label" data-key="nom_discord">Discord Username</label><input class="form-input" id="nom-user" placeholder="e.g. CurbStompX" data-placeholder="ph_clan_name_eg"></div>
+        <div class="form-row"><label class="form-label" data-key="nom_clan">Clan</label><input class="form-input" id="nom-clan" placeholder="e.g. Shadow Royale" data-placeholder="ph_shadow_royale"></div>
         <div class="form-row"><label class="form-label" data-key="nom_region">Region</label>
           <select class="form-select" id="nom-region">
             <option value="EN">🇬🇧 EN — English</option>
@@ -1054,7 +1151,7 @@
             <option value="ZH">🇨🇳 ZH — Chinese</option>
           </select>
         </div>
-        <div class="form-row"><label class="form-label" data-key="nom_statement">Statement</label><textarea class="form-input form-textarea" id="nom-statement" placeholder="Why should this person represent the region?"></textarea></div>
+        <div class="form-row"><label class="form-label" data-key="nom_statement">Statement</label><textarea class="form-input form-textarea" id="nom-statement" placeholder="Why should this person represent the region?" data-placeholder="ph_nom_statement"></textarea></div>
         <button class="btn" onclick="submitNomination()" data-key="submit_nomination">Submit Nomination</button>
       </div>
       <div class="card">
@@ -1309,7 +1406,25 @@ const T = {
     admin_tools:'Admin Tools', reload_config:'⟳  Reload config from disk',
     clear_emoji:'✕  Clear emoji cache', clear_sticker:'✕  Clear sticker cache',
     reset_config:'⚠  Reset all config',
-    active_langs:'Active Languages', add_lang_btn:'Add'
+    active_langs:'Active Languages', add_lang_btn:'Add',
+    // Boycott banner
+    boycott_title:'Draft Action Plan — The Boycott',
+    boycott_intro:'We propose a boycott of the next DPS unit.',
+    boycott_reasons_lbl:'Reasons for targeting a DPS rather than a support:',
+    boycott_r1:"Gives us time to get as many clans and players on board as possible — Truffle's release is too soon to organise mass collective action.",
+    boycott_r2:'Easier to persuade players to boycott a DPS than a support unit.',
+    boycott_r3:"Most players will eventually obtain Truffle; boycotting its event means players pay more for it, which would increase dev profit — the opposite of our goal.",
+    boycott_statement:'Leading up to the boycott, we will submit a joint statement to the developers signed by over 100 clans, outlining our concerns and notifying them of our planned actions. This will carry a weight the devs have never seen before from the community.',
+    boycott_decorations:'On a designated date, all participating clans will ask their players to remove all decorations from their player profiles as a show of solidarity — a visible signal to devs of the strength of feeling across the entire player base.',
+    boycott_further:'Further actions under discussion include non-participation in Round Table events and playtests.',
+    boycott_discuss_title:'Open Discussion Points',
+    boycott_dp1:'2–3 Coordinators needed to take the Action Plan to completion — ideally the most experienced long-time players among us. See the separate Coordination & Planning thread.',
+    boycott_dp2:'Target unit consensus: Do we have agreement that the boycott targets the next DPS? Vote in the designated channel.',
+    boycott_dp3:'Player profile changes (proposed by Pample): When do they go live? Exactly what changes? Does it include a clan description banner? How long do they stay in effect? (Proposals range from a few days to the full run-up to the boycott.)',
+    // Placeholders
+    ph_clan_name:'e.g. Shadow Royale', ph_discord_user:'Discord username',
+    ph_optional_notes:'Optional notes', ph_clan_name_eg:'e.g. CurbStompX',
+    ph_shadow_royale:'e.g. Shadow Royale', ph_nom_statement:'Why should this person represent the region?'
   },
   RU: {
     nav_overview:'Обзор', nav_clans:'Кланы', nav_action:'Plan działania',
@@ -1372,7 +1487,23 @@ const T = {
     admin_tools:'Инструменты администратора', reload_config:'⟳  Перезагрузить конфиг',
     clear_emoji:'✕  Очистить кэш эмодзи', clear_sticker:'✕  Очистить кэш стикеров',
     reset_config:'⚠  Сбросить все настройки',
-    active_langs:'Активные языки', add_lang_btn:'Добавить'
+    active_langs:'Активные языки', add_lang_btn:'Добавить',
+    boycott_title:'Черновик плана действий — Бойкот',
+    boycott_intro:'Мы предлагаем бойкот следующего DPS-юнита.',
+    boycott_reasons_lbl:'Причины выбора DPS, а не вспомогательного юнита:',
+    boycott_r1:'Даёт нам время привлечь как можно больше кланов и игроков — релиз Трюфеля слишком скоро для массовой организации.',
+    boycott_r2:'Убедить игроков бойкотировать DPS проще, чем вспомогательный юнит.',
+    boycott_r3:'Большинство игроков всё равно получат Трюфеля; бойкот его ивента означает, что игроки заплатят больше — противоположное нашей цели.',
+    boycott_statement:'Перед бойкотом мы подадим совместное заявление разработчикам, подписанное более чем 100 кланами, с изложением наших опасений и уведомлением о планируемых действиях.',
+    boycott_decorations:'В назначенную дату все участвующие кланы попросят игроков удалить все украшения с профилей — знак солидарности и сигнал разработчикам.',
+    boycott_further:'Дополнительные меры: неучастие в мероприятиях Round Table и плейтестах.',
+    boycott_discuss_title:'Открытые вопросы для обсуждения',
+    boycott_dp1:'Нужны 2–3 Координатора для реализации плана — желательно самые опытные игроки. См. отдельный тред.',
+    boycott_dp2:'Консенсус по цели: согласны ли мы, что бойкот направлен против следующего DPS? Проголосуйте в канале.',
+    boycott_dp3:'Изменения профиля (предложено Pample): Когда они вступят в силу? Какие именно? Включает ли баннер клана? Как долго? (Предложения от нескольких дней до начала бойкота.)',
+    ph_clan_name:'напр. Shadow Royale', ph_discord_user:'Имя в Discord',
+    ph_optional_notes:'Необязательные заметки', ph_clan_name_eg:'напр. CurbStompX',
+    ph_shadow_royale:'напр. Shadow Royale', ph_nom_statement:'Почему этот человек должен представлять регион?'
   },
   DE: {
     nav_overview:'Übersicht', nav_clans:'Clans', nav_action:'Aktionsplan',
@@ -1435,7 +1566,23 @@ const T = {
     admin_tools:'Admin-Tools', reload_config:'⟳  Konfiguration neu laden',
     clear_emoji:'✕  Emoji-Cache leeren', clear_sticker:'✕  Sticker-Cache leeren',
     reset_config:'⚠  Alle Einstellungen zurücksetzen',
-    active_langs:'Aktive Sprachen', add_lang_btn:'Hinzufügen'
+    active_langs:'Aktive Sprachen', add_lang_btn:'Hinzufügen',
+    boycott_title:'Aktionsplanentwurf — Der Boykott',
+    boycott_intro:'Wir schlagen einen Boykott der nächsten DPS-Einheit vor.',
+    boycott_reasons_lbl:'Gründe für die Wahl eines DPS statt einer Support-Einheit:',
+    boycott_r1:'Gibt uns Zeit, möglichst viele Clans einzubinden — Trüffels Release ist zu bald für eine Massenaktion.',
+    boycott_r2:'Es ist leichter, Spieler zum Boykott eines DPS zu überreden als einer Support-Einheit.',
+    boycott_r3:'Die meisten Spieler werden Trüffel sowieso erhalten; ein Boykott seines Events bedeutet mehr Ausgaben — das Gegenteil unseres Ziels.',
+    boycott_statement:'Vor dem Boykott reichen wir eine gemeinsame Erklärung an die Entwickler ein, unterzeichnet von über 100 Clans, mit unseren Bedenken und Plänen.',
+    boycott_decorations:'An einem festgelegten Datum werden alle teilnehmenden Clans ihre Spieler bitten, alle Dekorationen aus ihren Profilen zu entfernen — als Zeichen der Solidarität.',
+    boycott_further:'Weitere diskutierte Maßnahmen: Nicht-Teilnahme an Round-Table-Events und Playtests.',
+    boycott_discuss_title:'Offene Diskussionspunkte',
+    boycott_dp1:'2–3 Koordinatoren benötigt — idealerweise die erfahrensten Langzeitspieler. Siehe separaten Planungs-Thread.',
+    boycott_dp2:'Einheitenkonsens: Sind wir einig, dass der Boykott den nächsten DPS betrifft? Abstimmung im Kanal.',
+    boycott_dp3:'Profiländerungen (vorgeschlagen von Pample): Wann gehen sie live? Was genau ändert sich? Clan-Banner? Wie lange? (Vorschläge reichen von wenigen Tagen bis zum Boykott.)',
+    ph_clan_name:'z.B. Shadow Royale', ph_discord_user:'Discord-Benutzername',
+    ph_optional_notes:'Optionale Notizen', ph_clan_name_eg:'z.B. CurbStompX',
+    ph_shadow_royale:'z.B. Shadow Royale', ph_nom_statement:'Warum sollte diese Person die Region vertreten?'
   },
   ES: {
     nav_overview:'Resumen', nav_clans:'Clanes', nav_action:'Plan de acción',
@@ -1498,7 +1645,23 @@ const T = {
     admin_tools:'Herramientas de admin', reload_config:'⟳  Recargar configuración',
     clear_emoji:'✕  Limpiar caché de emojis', clear_sticker:'✕  Limpiar caché de stickers',
     reset_config:'⚠  Restablecer toda la configuración',
-    active_langs:'Idiomas activos', add_lang_btn:'Añadir'
+    active_langs:'Idiomas activos', add_lang_btn:'Añadir',
+    boycott_title:'Borrador del plan de acción — El boicot',
+    boycott_intro:'Proponemos un boicot a la próxima unidad DPS.',
+    boycott_reasons_lbl:'Razones para elegir un DPS en lugar de una unidad de soporte:',
+    boycott_r1:'Nos da tiempo para sumar el mayor número posible de clanes — el lanzamiento de Truffle es demasiado pronto para organizar una acción colectiva masiva.',
+    boycott_r2:'Es más fácil persuadir a los jugadores de boicotear un DPS que una unidad de soporte.',
+    boycott_r3:'La mayoría de jugadores acabará obteniendo a Truffle; boicotear su evento significa que pagan más, lo que aumentaría los beneficios de los desarrolladores — contrario a nuestro objetivo.',
+    boycott_statement:'Antes del boicot, enviaremos una declaración conjunta a los desarrolladores firmada por más de 100 clanes, exponiendo nuestras preocupaciones y notificándoles nuestras acciones planificadas.',
+    boycott_decorations:'En una fecha designada, todos los clanes participantes pedirán a sus jugadores que eliminen todas las decoraciones de sus perfiles — señal visible de solidaridad hacia los desarrolladores.',
+    boycott_further:'Otras acciones en discusión: no participar en eventos de Mesa Redonda y playtests.',
+    boycott_discuss_title:'Puntos abiertos de discusión',
+    boycott_dp1:'Se necesitan 2–3 Coordinadores para llevar el Plan a buen término — idealmente los jugadores más experimentados. Ver hilo de Coordinación.',
+    boycott_dp2:'Consenso sobre la unidad objetivo: ¿Acordamos que el boicot apunta al próximo DPS? Vota en el canal.',
+    boycott_dp3:'Cambios en el perfil (propuesto por Pample): ¿Cuándo entran en vigor? ¿Qué cambios exactamente? ¿Incluye banner de descripción de clan? ¿Cuánto tiempo? (Propuestas desde pocos días hasta el inicio del boicot.)',
+    ph_clan_name:'ej. Shadow Royale', ph_discord_user:'Nombre de usuario de Discord',
+    ph_optional_notes:'Notas opcionales', ph_clan_name_eg:'ej. CurbStompX',
+    ph_shadow_royale:'ej. Shadow Royale', ph_nom_statement:'¿Por qué debería esta persona representar la región?'
   },
   FR: {
     nav_overview:'Aperçu', nav_clans:'Clans', nav_action:"Plan d'action",
@@ -1561,7 +1724,23 @@ const T = {
     admin_tools:'Outils admin', reload_config:'⟳  Recharger la config',
     clear_emoji:'✕  Vider le cache emoji', clear_sticker:'✕  Vider le cache stickers',
     reset_config:'⚠  Réinitialiser toute la config',
-    active_langs:'Langues actives', add_lang_btn:'Ajouter'
+    active_langs:'Langues actives', add_lang_btn:'Ajouter',
+    boycott_title:'Projet de plan d\'action — Le boycott',
+    boycott_intro:'Nous proposons un boycott de la prochaine unité DPS.',
+    boycott_reasons_lbl:'Raisons de cibler un DPS plutôt qu\'une unité de soutien :',
+    boycott_r1:'Cela nous laisse le temps de rallier un maximum de clans — la sortie de Truffle est trop imminente pour organiser une action collective massive.',
+    boycott_r2:'Il est plus facile de persuader les joueurs de boycotter un DPS qu\'une unité de soutien.',
+    boycott_r3:'La plupart des joueurs finiront par obtenir Truffle ; boycotter son événement ferait payer plus les joueurs, ce qui augmenterait les profits — l\'inverse de notre objectif.',
+    boycott_statement:'Avant le boycott, nous soumettrons une déclaration commune aux développeurs signée par plus de 100 clans, exposant nos préoccupations et leur notifiant nos actions prévues.',
+    boycott_decorations:'À une date désignée, tous les clans participants demanderont à leurs joueurs de retirer toutes les décorations de leurs profils — signal visible de solidarité envers les développeurs.',
+    boycott_further:'D\'autres actions en discussion : non-participation aux événements Table Ronde et playtests.',
+    boycott_discuss_title:'Points ouverts de discussion',
+    boycott_dp1:'2–3 Coordinateurs nécessaires pour mener le Plan à terme — idéalement les joueurs les plus expérimentés. Voir le fil de Coordination.',
+    boycott_dp2:'Consensus sur l\'unité cible : sommes-nous d\'accord que le boycott vise le prochain DPS ? Votez dans le canal.',
+    boycott_dp3:'Changements de profil (proposés par Pample) : Quand entrent-ils en vigueur ? Quels changements exactement ? Inclut-il une bannière de clan ? Combien de temps ? (Propositions de quelques jours au début du boycott.)',
+    ph_clan_name:'ex. Shadow Royale', ph_discord_user:'Nom d\'utilisateur Discord',
+    ph_optional_notes:'Notes optionnelles', ph_clan_name_eg:'ex. CurbStompX',
+    ph_shadow_royale:'ex. Shadow Royale', ph_nom_statement:'Pourquoi cette personne devrait-elle représenter la région ?'
   },
   IT: {
     nav_overview:'Panoramica', nav_clans:'Clan', nav_action:"Piano d'azione",
@@ -1624,7 +1803,23 @@ const T = {
     admin_tools:'Strumenti admin', reload_config:'⟳  Ricarica config',
     clear_emoji:'✕  Svuota cache emoji', clear_sticker:'✕  Svuota cache sticker',
     reset_config:'⚠  Reimposta tutta la config',
-    active_langs:'Lingue attive', add_lang_btn:'Aggiungi'
+    active_langs:'Lingue attive', add_lang_btn:'Aggiungi',
+    boycott_title:'Bozza del piano d\'azione — Il boicottaggio',
+    boycott_intro:'Proponiamo un boicottaggio della prossima unità DPS.',
+    boycott_reasons_lbl:'Motivi per cui prendere di mira un DPS anziché un\'unità di supporto:',
+    boycott_r1:'Ci dà il tempo di coinvolgere più clan possibili — il rilascio di Truffle è troppo imminente per organizzare un\'azione di massa.',
+    boycott_r2:'È più facile convincere i giocatori a boicottare un DPS che un\'unità di supporto.',
+    boycott_r3:'La maggior parte dei giocatori otterrà Truffle comunque; boicottare il suo evento farebbe pagare di più i giocatori, aumentando i profitti — l\'opposto del nostro obiettivo.',
+    boycott_statement:'Prima del boicottaggio, presenteremo una dichiarazione congiunta agli sviluppatori firmata da oltre 100 clan, esponendo le nostre preoccupazioni e notificando le nostre azioni pianificate.',
+    boycott_decorations:'In una data designata, tutti i clan partecipanti chiederanno ai loro giocatori di rimuovere tutte le decorazioni dai profili — segnale visibile di solidarietà verso gli sviluppatori.',
+    boycott_further:'Ulteriori azioni in discussione: non partecipazione agli eventi Round Table e ai playtest.',
+    boycott_discuss_title:'Punti aperti di discussione',
+    boycott_dp1:'Servono 2–3 Coordinatori per portare il Piano a termine — idealmente i giocatori più esperti. Vedi il thread di Coordinamento.',
+    boycott_dp2:'Consenso sull\'unità target: siamo d\'accordo che il boicottaggio riguardi il prossimo DPS? Vota nel canale designato.',
+    boycott_dp3:'Modifiche al profilo (proposte da Pample): Quando entrano in vigore? Quali cambiamenti esatti? Include un banner del clan? Per quanto tempo? (Proposte da pochi giorni all\'inizio del boicottaggio.)',
+    ph_clan_name:'es. Shadow Royale', ph_discord_user:'Nome utente Discord',
+    ph_optional_notes:'Note opzionali', ph_clan_name_eg:'es. CurbStompX',
+    ph_shadow_royale:'es. Shadow Royale', ph_nom_statement:'Perché questa persona dovrebbe rappresentare la regione?'
   },
   ZH: {
     nav_overview:'概览', nav_clans:'公会', nav_action:'行动计划',
@@ -1687,7 +1882,23 @@ const T = {
     admin_tools:'管理工具', reload_config:'⟳  从磁盘重新加载配置',
     clear_emoji:'✕  清除表情包缓存', clear_sticker:'✕  清除贴纸缓存',
     reset_config:'⚠  重置所有配置',
-    active_langs:'活跃语言', add_lang_btn:'添加'
+    active_langs:'活跃语言', add_lang_btn:'添加',
+    boycott_title:'行动计划草案 — 抵制',
+    boycott_intro:'我们提议抵制下一个DPS单位。',
+    boycott_reasons_lbl:'选择DPS而非辅助单位的原因：',
+    boycott_r1:'给我们时间尽可能多地让公会加入——松露的发布太快，无法组织大规模集体行动。',
+    boycott_r2:'说服玩家抵制DPS比辅助单位更容易。',
+    boycott_r3:'大多数玩家最终都会获得松露；抵制其活动意味着玩家花更多钱——与我们的目标相反。',
+    boycott_statement:'在抵制之前，我们将向开发者提交一份由100多个公会签署的联合声明，阐述我们的关切并通知他们我们的计划行动。',
+    boycott_decorations:'在指定日期，所有参与公会将要求玩家从个人资料中删除所有装饰——作为团结的可见信号。',
+    boycott_further:'其他讨论中的行动包括不参与圆桌活动和游戏测试。',
+    boycott_discuss_title:'开放讨论点',
+    boycott_dp1:'需要2–3名协调员来完成行动计划——最好是我们中最有经验的长期玩家。见协调规划帖。',
+    boycott_dp2:'目标单位共识：我们是否同意抵制下一个DPS？在指定频道投票。',
+    boycott_dp3:'玩家资料更改（Pample提议）：何时生效？具体什么变化？是否包括公会描述横幅？持续多长时间？（提议从几天到抵制前夕不等。）',
+    ph_clan_name:'例：Shadow Royale', ph_discord_user:'Discord用户名',
+    ph_optional_notes:'可选备注', ph_clan_name_eg:'例：CurbStompX',
+    ph_shadow_royale:'例：Shadow Royale', ph_nom_statement:'为什么此人应该代表该区域？'
   }
 };
 
@@ -1701,6 +1912,32 @@ function applyTranslations(lang) {
     const key = el.getAttribute('data-key');
     if (t[key] !== undefined) el.textContent = t[key];
   });
+  // Update placeholders
+  document.querySelectorAll('[data-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-placeholder');
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+}
+
+function toggleMobileNav() {
+  const nav = document.getElementById('mobile-nav');
+  const btn = document.getElementById('hamburger-btn');
+  nav.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function showPageMobile(id) {
+  // Delegate to regular showPage but also sync desktop nav active state
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const desktopBtn = document.getElementById('nav-' + id);
+  if (desktopBtn) desktopBtn.classList.add('active');
+  const mobBtn = document.getElementById('mob-nav-' + id);
+  if (mobBtn) mobBtn.classList.add('active');
+  // Close drawer
+  document.getElementById('mobile-nav').classList.remove('open');
+  document.getElementById('hamburger-btn').classList.remove('open');
 }
 
 function rebuildChannelList(lang) {
@@ -1749,6 +1986,10 @@ document.addEventListener('click', e => {
   if (!e.target.closest('#lang-selector-btn') && !e.target.closest('#lang-dropdown')) {
     document.getElementById('lang-dropdown').classList.remove('open');
   }
+  if (!e.target.closest('#hamburger-btn') && !e.target.closest('#mobile-nav')) {
+    document.getElementById('mobile-nav').classList.remove('open');
+    document.getElementById('hamburger-btn').classList.remove('open');
+  }
 });
 
 // ── Navigation ────────────────────────────────────────────────────────────
@@ -1757,6 +1998,9 @@ function showPage(id, btn) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   btn.classList.add('active');
+  // Sync mobile nav
+  const mobBtn = document.getElementById('mob-nav-' + id);
+  if (mobBtn) mobBtn.classList.add('active');
 }
 
 // ── Chat ──────────────────────────────────────────────────────────────────
@@ -1939,6 +2183,8 @@ function _startSession(payload) {
   SESSION = payload;
   // Show/hide Admin tab
   document.getElementById('nav-admin').style.display = payload.admin ? '' : 'none';
+  const mobAdmin = document.getElementById('mob-nav-admin');
+  if (mobAdmin) mobAdmin.style.display = payload.admin ? '' : 'none';
   // Render user chip in topbar
   const bar = document.getElementById('user-info-bar');
   const platformBadge = payload.platform === 'discord'
@@ -1978,6 +2224,8 @@ function signOut() {
   document.getElementById('user-info-bar').innerHTML = '';
   document.getElementById('user-info-bar').style.display = 'none';
   document.getElementById('nav-admin').style.display = 'none';
+  const mobAdmin = document.getElementById('mob-nav-admin');
+  if (mobAdmin) mobAdmin.style.display = 'none';
 }
 
 // ── Auto-login from URL ?token=... ────────────────────────────────────────
