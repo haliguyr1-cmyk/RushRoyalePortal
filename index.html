@@ -460,37 +460,66 @@
     border: 1px solid var(--border2);
     border-radius: 14px;
     padding: 2.5rem 2rem;
-    max-width: 440px; width: 100%;
+    max-width: 460px; width: 100%;
     text-align: center;
     box-shadow: 0 0 60px rgba(212,160,23,0.08);
   }
   .auth-logo {
     font-family: 'Cinzel', serif;
-    font-size: 20px; font-weight: 700;
+    font-size: 22px; font-weight: 700;
     color: var(--gold);
     text-shadow: 0 0 20px rgba(212,160,23,0.4);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
-  .auth-sub {
+  .auth-tagline {
+    font-size: 12px; color: var(--text3);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1.8rem;
+  }
+  /* Spinner shown while auto-verifying */
+  .auth-spinner-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 14px;
+    padding: 1rem 0 1.5rem;
+  }
+  .auth-spinner {
+    width: 38px; height: 38px;
+    border: 3px solid rgba(212,160,23,0.15);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .auth-spinner-label {
     font-size: 13px; color: var(--text2);
-    margin-bottom: 2rem; line-height: 1.55;
+  }
+  /* Fallback manual entry (hidden by default, shown if auto-auth fails) */
+  .auth-fallback { display: none; }
+  .auth-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 1.2rem 0;
+    font-size: 11px; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .auth-divider::before, .auth-divider::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--border);
   }
   .auth-input {
     width: 100%; background: var(--bg3);
     border: 1px solid var(--border);
     border-radius: 8px; padding: 12px 14px;
-    font-size: 14px; font-family: 'Inter', sans-serif;
+    font-size: 13px; font-family: 'Inter', sans-serif;
     color: var(--text); text-align: center;
-    letter-spacing: 0.06em;
     transition: border-color 0.15s;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   .auth-input:focus { outline: none; border-color: var(--gold-dark); }
   .auth-btn {
     width: 100%; background: rgba(212,160,23,0.18);
     border: 1px solid var(--border2);
     border-radius: 8px; padding: 11px;
-    font-size: 14px; font-weight: 600;
+    font-size: 13px; font-weight: 600;
     font-family: 'Inter', sans-serif;
     color: var(--gold); cursor: pointer;
     transition: all 0.15s;
@@ -498,7 +527,40 @@
   .auth-btn:hover { background: rgba(212,160,23,0.3); }
   .auth-error {
     font-size: 12px; color: #e74c3c;
-    margin-top: 8px; min-height: 18px;
+    margin-top: 8px; min-height: 16px;
+  }
+  /* "No link yet?" instructions box */
+  .auth-no-link {
+    margin-top: 1.4rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    text-align: left;
+  }
+  .auth-no-link-title {
+    font-size: 11px; font-weight: 700;
+    color: var(--text3); text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 10px;
+  }
+  .auth-step {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 12px; color: var(--text2); line-height: 1.5;
+  }
+  .auth-step:last-child { border-bottom: none; padding-bottom: 0; }
+  .auth-step-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(212,160,23,0.1);
+    border: 1px solid var(--border);
+    color: var(--gold); font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .auth-step code {
+    background: var(--bg4); padding: 1px 6px;
+    border-radius: 4px; font-size: 11px;
+    color: var(--gold-light);
   }
   .auth-how {
     margin-top: 1.5rem;
@@ -600,25 +662,40 @@
 <div id="auth-gate">
   <div class="auth-card">
     <div class="auth-logo">⚔ Rush Royale Portal</div>
-    <p class="auth-sub">
-      This portal is for authorised clan leaders &amp; coordinators only.<br>
-      Request your personal access link from Discord or Telegram.
-    </p>
-    <input class="auth-input" id="auth-token-input" type="text"
-           placeholder="Paste your access token here…"
-           onkeydown="if(event.key==='Enter')tryAuth()">
-    <button class="auth-btn" onclick="tryAuth()">🔓 Enter Portal</button>
-    <div class="auth-error" id="auth-error"></div>
-    <div class="auth-how">
-      <strong>How to get your link:</strong><br>
-      On <span class="auth-platform-badge badge-discord">Discord</span> run
-      <code style="background:var(--bg4);padding:1px 5px;border-radius:3px">/portal</code>
-      in any server channel.<br>
-      On <span class="auth-platform-badge badge-tg">Telegram</span> send
-      <code style="background:var(--bg4);padding:1px 5px;border-radius:3px">/portal</code>
-      in the group.<br><br>
-      The bot will reply privately with a unique link valid for <strong>1 hour</strong>.<br>The link opens: <code style="background:var(--bg4);padding:1px 5px;border-radius:3px;font-size:11px">https://rush-royale-portal.vercel.app</code>
+    <div class="auth-tagline">Clan Leaders &amp; Coordinators</div>
+
+    <!-- Spinner: shown while auto-verifying the URL token -->
+    <div class="auth-spinner-wrap" id="auth-spinner">
+      <div class="auth-spinner"></div>
+      <div class="auth-spinner-label">Verifying your access link…</div>
     </div>
+
+    <!-- Fallback: shown only if no valid token was in the URL -->
+    <div class="auth-fallback" id="auth-fallback">
+      <div class="auth-divider">enter your token</div>
+      <input class="auth-input" id="auth-token-input" type="text"
+             placeholder="Paste token here…"
+             onkeydown="if(event.key==='Enter')tryAuth()">
+      <button class="auth-btn" onclick="tryAuth()">🔓 Enter Portal</button>
+      <div class="auth-error" id="auth-error"></div>
+
+      <div class="auth-no-link">
+        <div class="auth-no-link-title">🔗 Don't have a link yet?</div>
+        <div class="auth-step">
+          <div class="auth-step-num">1</div>
+          <div>Open <strong>Discord</strong> and type <code>/portal</code> in the server — the bot will send you a private message with your link.</div>
+        </div>
+        <div class="auth-step">
+          <div class="auth-step-num">2</div>
+          <div>On <strong>Telegram</strong> send <code>/portal</code> in the group — the bot will DM you your personal link.</div>
+        </div>
+        <div class="auth-step">
+          <div class="auth-step-num">3</div>
+          <div>Just <strong>click the link</strong> the bot sends you — it opens this page and logs you in automatically. Links are valid for <strong>1 hour</strong>.</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1846,13 +1923,13 @@ async function _verifyToken(raw) {
 async function tryAuth() {
   const raw = document.getElementById('auth-token-input').value.trim();
   if (!raw) {
-    document.getElementById('auth-error').textContent = 'Please paste your access token.';
+    document.getElementById('auth-error').textContent = 'Please paste your token from the bot message.';
     return;
   }
   const payload = await _verifyToken(raw);
   if (!payload) {
     document.getElementById('auth-error').textContent =
-      '❌ Invalid or expired token. Request a new link from the bot.';
+      '❌ Token invalid or expired — request a new link from the bot.';
     return;
   }
   _startSession(payload);
@@ -1860,14 +1937,9 @@ async function tryAuth() {
 
 function _startSession(payload) {
   SESSION = payload;
-  // Show/hide Admin tab based on admin flag
-  const adminBtn = document.getElementById('nav-admin');
-  if (payload.admin) {
-    adminBtn.style.display = '';
-  } else {
-    adminBtn.style.display = 'none';
-  }
-  // Render user info bar
+  // Show/hide Admin tab
+  document.getElementById('nav-admin').style.display = payload.admin ? '' : 'none';
+  // Render user chip in topbar
   const bar = document.getElementById('user-info-bar');
   const platformBadge = payload.platform === 'discord'
     ? '<span class="auth-platform-badge badge-discord">⚡ Discord</span>'
@@ -1882,36 +1954,54 @@ function _startSession(payload) {
     </div>
     <button class="btn-signout" onclick="signOut()">Sign out</button>`;
   bar.style.display = 'flex';
-  // Hide gate
+  // Dismiss the gate
   document.getElementById('auth-gate').style.display = 'none';
+}
+
+function _showFallback(errorMsg) {
+  // Hide spinner, reveal the manual-entry fallback form
+  document.getElementById('auth-spinner').style.display = 'none';
+  document.getElementById('auth-fallback').style.display = 'block';
+  if (errorMsg) {
+    document.getElementById('auth-error').textContent = errorMsg;
+  }
 }
 
 function signOut() {
   SESSION = null;
-  document.getElementById('auth-gate').style.display = 'flex';
+  // Reset gate to spinner state so it's clean next time
+  document.getElementById('auth-spinner').style.display = 'flex';
+  document.getElementById('auth-fallback').style.display = 'none';
   document.getElementById('auth-token-input').value = '';
   document.getElementById('auth-error').textContent = '';
+  document.getElementById('auth-gate').style.display = 'flex';
   document.getElementById('user-info-bar').innerHTML = '';
   document.getElementById('user-info-bar').style.display = 'none';
   document.getElementById('nav-admin').style.display = 'none';
 }
 
-// Auto-read token from URL param ?token=...
+// ── Auto-login from URL ?token=... ────────────────────────────────────────
+// This is the normal path: user clicks the bot's link → lands here → logs in
+// without doing anything.
 (async function() {
   const params = new URLSearchParams(window.location.search);
   const t = params.get('token');
   if (t) {
+    // Small delay so the spinner is visible briefly (feels intentional)
+    await new Promise(r => setTimeout(r, 600));
     const payload = await _verifyToken(t);
     if (payload) {
       _startSession(payload);
-      // Clean the token from the URL bar (cosmetic)
-      try {
-        history.replaceState({}, '', window.location.pathname);
-      } catch(_) {}
+      // Scrub token from address bar so it can't be copied from there
+      try { history.replaceState({}, '', window.location.pathname); } catch(_) {}
       return;
     }
+    // Token present but invalid/expired
+    _showFallback('⚠️ That link has expired. Request a fresh one with /portal.');
+    return;
   }
-  // No valid token — gate stays visible
+  // No token in URL — show fallback form straight away (no spinner needed)
+  _showFallback(null);
 })();
 
 </script>
