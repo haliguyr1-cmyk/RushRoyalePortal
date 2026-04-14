@@ -1412,6 +1412,14 @@ const _PORTAL_URL = 'https://rush-royale-portal.vercel.app';
 // ══════════════════════════════════════════════════════════════
 
 // ══════════════════════════════════════════════════════════════
+// BOT API — only needed if you want to send messages from the portal.
+// Leave as null to use Firestore (read-only) mode.
+// Set to your bot's address e.g. 'http://localhost:8765' to enable sending.
+// ══════════════════════════════════════════════════════════════
+const CHAT_API_BASE = null;
+// ══════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════
 // FIREBASE CONFIG — paste your web app config here.
 // Firebase console → Project settings → Your apps → Add app (web)
 // → copy the firebaseConfig object values below.
