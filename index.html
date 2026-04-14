@@ -2381,9 +2381,13 @@ async function sendMsg() {
   };
 
   try {
-    // Write to Firestore — the bot's listener will pick this up and forward to Discord
-    const ref = collection(_firestoreDb, 'messages', _activeChanId, 'msgs');
-    await addDoc(ref, { ...msgDoc });
+    // Write to portal_outbox — a flat top-level collection the bot polls every 3s.
+    // The bot forwards it to Discord then marks _forwarded=true.
+    // We also write it directly into the channel's msgs so it shows instantly in chat.
+    const outboxRef = collection(_firestoreDb, 'portal_outbox');
+    const msgsRef   = collection(_firestoreDb, 'messages', _activeChanId, 'msgs');
+    await addDoc(outboxRef, { ...msgDoc });
+    await addDoc(msgsRef,   { ...msgDoc, _forwarded: true }); // already shown, skip re-forward
   } catch(e) {
     console.error('Send failed:', e);
     inp.value = content; // restore on failure
