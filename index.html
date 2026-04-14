@@ -2549,6 +2549,21 @@ function addLang() {
   const dot  = document.getElementById('firestore-status-dot');
   const text = document.getElementById('firestore-status-text');
   const pill = document.getElementById('firestore-status-pill');
+
+  // The Firebase SDK is loaded via <script type="module"> which runs async.
+  // Wait up to 5 seconds for it to signal ready before giving up.
+  await new Promise(resolve => {
+    if (window._firebaseReady) return resolve();
+    let waited = 0;
+    const interval = setInterval(() => {
+      waited += 50;
+      if (window._firebaseReady || waited >= 5000) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 50);
+  });
+
   try {
     if (_initFirebase()) {
       await _loadChannelMeta();
