@@ -2249,7 +2249,8 @@ function _subscribeFirestore(channelId) {
 
   const { collection, query, orderBy, limit, onSnapshot } = window.firebaseFirestore;
   const msgsRef = collection(_firestoreDb, 'messages', channelId, 'msgs');
-  const q       = query(msgsRef, orderBy('timestamp', 'asc'), limit(100));
+  // Order DESC so Firestore gives us the LATEST 100, then we reverse for display
+  const q       = query(msgsRef, orderBy('timestamp', 'desc'), limit(100));
 
   let firstLoad = true;
   _firestoreUnsub = onSnapshot(q,
@@ -2260,13 +2261,14 @@ function _subscribeFirestore(channelId) {
       if (welcome) welcome.remove();
 
       if (firstLoad) {
-        // Render all existing messages at once
-        snap.docs.forEach(doc => _renderMsg(doc.data(), container, false));
+        // Docs are newest-first from the query; reverse so oldest renders at top
+        const docs = [...snap.docs].reverse();
+        docs.forEach(doc => _renderMsg(doc.data(), container, false));
         container.scrollTop = container.scrollHeight;
         firstLoad = false;
         _setStatusBar(true);
       } else {
-        // Only render new additions
+        // New additions arrive at the front of a desc query — render them at bottom
         snap.docChanges().forEach(change => {
           if (change.type === 'added') {
             _renderMsg(change.doc.data(), container, true);
@@ -2289,13 +2291,14 @@ async function _pollFirestore(channelId) {
   try {
     const { collection, query, orderBy, limit, getDocs } = window.firebaseFirestore;
     const msgsRef = collection(_firestoreDb, 'messages', channelId, 'msgs');
-    const q       = query(msgsRef, orderBy('timestamp', 'asc'), limit(100));
+    const q       = query(msgsRef, orderBy('timestamp', 'desc'), limit(100));
     const snap    = await getDocs(q);
     const container = document.getElementById('chat-messages');
     if (!container) return;
     const welcome = document.getElementById('chat-welcome');
     if (welcome) welcome.remove();
-    snap.docs.forEach(doc => _renderMsg(doc.data(), container, false));
+    const docs = [...snap.docs].reverse();
+    docs.forEach(doc => _renderMsg(doc.data(), container, false));
     container.scrollTop = container.scrollHeight;
     _setStatusBar(false);
   } catch(e) { console.warn('Firestore poll error:', e); }
