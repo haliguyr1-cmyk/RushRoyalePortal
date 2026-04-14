@@ -1397,10 +1397,10 @@
 <script type="module">
   // Load Firebase SDKs and expose them globally so the main script can use them
   import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs }
+  import { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs, addDoc, serverTimestamp }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
   window.firebaseApp       = { initializeApp, getApps };
-  window.firebaseFirestore = { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs };
+  window.firebaseFirestore = { getFirestore, collection, query, orderBy, limit, onSnapshot, getDocs, addDoc, serverTimestamp };
   window._firebaseReady    = true;
 </script>
 <script>
@@ -2189,7 +2189,11 @@ function _renderMsg(m, container, scrollToBottom) {
     <div class="msg-body">
       <div class="msg-hdr">
         <span class="msg-author" style="color:${color}">${_escHtml(m.author)}</span>
-        ${m.is_webhook ? '<span style="font-size:10px;background:rgba(41,128,185,0.15);color:#5dade2;border:1px solid rgba(41,128,185,0.25);border-radius:10px;padding:0 5px">bridge</span>' : ''}
+        ${m.source === 'portal'
+          ? `<span style="font-size:10px;background:rgba(212,160,23,0.15);color:var(--gold);border:1px solid rgba(212,160,23,0.3);border-radius:10px;padding:0 5px">${m.platform === 'telegram' ? '✈ tg' : '🌐 portal'}</span>`
+          : m.is_webhook
+            ? '<span style="font-size:10px;background:rgba(41,128,185,0.15);color:#5dade2;border:1px solid rgba(41,128,185,0.25);border-radius:10px;padding:0 5px">bridge</span>'
+            : ''}
         <span class="msg-time">${_fmtTime(m.timestamp)}</span>
       </div>
       ${bodyHtml}
@@ -2250,7 +2254,7 @@ function _subscribeFirestore(channelId) {
   const { collection, query, orderBy, limit, onSnapshot } = window.firebaseFirestore;
   const msgsRef = collection(_firestoreDb, 'messages', channelId, 'msgs');
   // Order DESC so Firestore gives us the LATEST 100, then we reverse for display
-  const q       = query(msgsRef, orderBy('timestamp', 'desc'), limit(100));
+  const q       = query(msgsRef, orderBy('timestamp', 'desc'), limit(200));
 
   let firstLoad = true;
   _firestoreUnsub = onSnapshot(q,
@@ -2291,7 +2295,7 @@ async function _pollFirestore(channelId) {
   try {
     const { collection, query, orderBy, limit, getDocs } = window.firebaseFirestore;
     const msgsRef = collection(_firestoreDb, 'messages', channelId, 'msgs');
-    const q       = query(msgsRef, orderBy('timestamp', 'desc'), limit(100));
+    const q       = query(msgsRef, orderBy('timestamp', 'desc'), limit(200));
     const snap    = await getDocs(q);
     const container = document.getElementById('chat-messages');
     if (!container) return;
@@ -2320,9 +2324,13 @@ function switchCh(channelId, chName, lang, color, btn) {
 
   const inp     = document.getElementById('chat-input');
   const sendBtn = document.getElementById('chat-send-btn');
-  // Read-only for now (sending still requires bot API)
-  if (inp)     { inp.placeholder = 'Read-only view — send messages in Discord'; inp.disabled = true; }
-  if (sendBtn) sendBtn.disabled = true;
+  if (SESSION) {
+    if (inp)     { inp.disabled = false; inp.placeholder = 'Message #' + chName.replace(/^#/,'') + '…'; }
+    if (sendBtn) sendBtn.disabled = false;
+  } else {
+    if (inp)     { inp.placeholder = 'Log in to send messages'; inp.disabled = true; }
+    if (sendBtn) sendBtn.disabled = true;
+  }
 
   const msgs = document.getElementById('chat-messages');
   msgs.innerHTML = `<div id="chat-welcome" style="text-align:center;color:var(--text3);font-size:13px;padding:3rem 0;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:1rem">⏳ Loading messages…</div>`;
@@ -2335,9 +2343,51 @@ function switchCh(channelId, chName, lang, color, btn) {
 let _rawPortalToken = '';
 
 // ── Send a message ─────────────────────────────────────────────────────────
-function sendMsg() {
-  // Chat is currently read-only — messages are sent via Discord directly.
-  // The input box is disabled; this function is a no-op placeholder.
+async function sendMsg() {
+  if (!SESSION || !_activeChanId || !_firestoreDb) return;
+  const inp = document.getElementById('chat-input');
+  const content = (inp.value || '').trim();
+  if (!content || content.length > 2000) return;
+
+  // Optimistically clear input right away
+  inp.value = '';
+
+  const { collection, addDoc, serverTimestamp } = window.firebaseFirestore;
+
+  // Build avatar: Discord avatar URLs require the avatar hash which we don't
+  // have in the token. Use the default Discord avatar based on uid discriminator,
+  // or Telegram logo for Telegram users.
+  const defaultDiscordAvatar = `https://cdn.discordapp.com/embed/avatars/${Number(BigInt(SESSION.uid) % 5n)}.png`;
+  const avatar = SESSION.platform === 'discord'
+    ? defaultDiscordAvatar
+    : 'https://telegram.org/img/t_logo.png';
+
+  const platformLabel = SESSION.platform === 'discord' ? '⚡' : '✈';
+  const displayName   = `${SESSION.uname}`;
+
+  const msgDoc = {
+    id:          `portal_${SESSION.uid}_${Date.now()}`,
+    author:      displayName,
+    avatar:      avatar,
+    content:     content,
+    timestamp:   new Date().toISOString(),
+    is_webhook:  false,
+    is_bot:      false,
+    source:      'portal',
+    _forwarded:  false,              // ← bot sets this to true after forwarding
+    platform:    SESSION.platform,
+    sender_uid:  SESSION.uid,
+    channel_id:  _activeChanId,
+  };
+
+  try {
+    // Write to Firestore — the bot's listener will pick this up and forward to Discord
+    const ref = collection(_firestoreDb, 'messages', _activeChanId, 'msgs');
+    await addDoc(ref, { ...msgDoc });
+  } catch(e) {
+    console.error('Send failed:', e);
+    inp.value = content; // restore on failure
+  }
 }
 
 // ── Build channel sidebar ──────────────────────────────────────────────────
@@ -2640,10 +2690,10 @@ function _startSession(payload, rawToken) {
   // Dismiss the gate
   document.getElementById('auth-gate').style.display = 'none';
   // Enable chat input now that we have an identity
-  if (CHAT_API_BASE && _activeChanId) {
-    const inp = document.getElementById('chat-input');
-    const btn = document.getElementById('chat-send-btn');
-    if (inp) inp.disabled = false;
+  const inp = document.getElementById('chat-input');
+  const btn = document.getElementById('chat-send-btn');
+  if (_activeChanId) {
+    if (inp) { inp.disabled = false; inp.placeholder = 'Message ' + (_activeChanName || '#channel') + '…'; }
     if (btn) btn.disabled = false;
   }
 }
