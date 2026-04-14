@@ -2320,6 +2320,16 @@ function switchCh(channelId, chName, lang, color, btn) {
 }
 
 // ── Build channel sidebar ──────────────────────────────────────────────────
+// ── Store raw token (for future send support) ──────────────────────────────
+let _rawPortalToken = '';
+
+// ── Send a message ─────────────────────────────────────────────────────────
+function sendMsg() {
+  // Chat is currently read-only — messages are sent via Discord directly.
+  // The input box is disabled; this function is a no-op placeholder.
+}
+
+// ── Build channel sidebar ──────────────────────────────────────────────────
 function rebuildChannelList(lang) {
   const scroll = document.getElementById('channel-scroll');
   const color  = LANGS[lang]?.color || '#378ADD';
@@ -2327,16 +2337,25 @@ function rebuildChannelList(lang) {
   let firstId = null, firstName = null;
 
   if (Object.keys(_channelMeta).length > 0) {
-    // Group channels by their group name
+    // Use Firestore channel_meta — group by group name, filter by lang
     const groups = {};
     for (const [chId, meta] of Object.entries(_channelMeta)) {
-      // Show the channel if it matches the selected lang, or if no lang match exists show all
       if (meta.lang && meta.lang.toUpperCase() !== lang) continue;
       const g = meta.group || meta.name;
       if (!groups[g]) groups[g] = [];
       groups[g].push({ id: chId, name: meta.name, group: g });
     }
-    for (const [groupName, channels] of Object.entries(groups)) {
+    // If nothing matched the lang filter, show all channels
+    const entries = Object.keys(groups).length > 0 ? groups : (() => {
+      const all = {};
+      for (const [chId, meta] of Object.entries(_channelMeta)) {
+        const g = meta.group || meta.name;
+        if (!all[g]) all[g] = [];
+        all[g].push({ id: chId, name: meta.name, group: g });
+      }
+      return all;
+    })();
+    for (const [groupName, channels] of Object.entries(entries)) {
       html += `<div class="channel-group-lbl">${_escHtml(groupName)}</div>`;
       for (const ch of channels) {
         if (!firstId) { firstId = ch.id; firstName = '#' + ch.name; }
@@ -2345,22 +2364,23 @@ function rebuildChannelList(lang) {
         </button>`;
       }
     }
-    // If no channels matched the lang filter, show all
-    if (!html) {
-      for (const [chId, meta] of Object.entries(_channelMeta)) {
-        if (!firstId) { firstId = chId; firstName = '#' + meta.name; }
-        html += `<div class="channel-group-lbl">${_escHtml(meta.group || meta.name)}</div>`;
-        html += `<button class="ch-btn" onclick="switchCh('${chId}','#${_escHtml(meta.name)}','${lang}','${color}',this)">
-          <div class="lang-dot" style="background:${color}"></div>#${_escHtml(meta.name)}
-        </button>`;
-      }
+  } else if (_apiChannelMap) {
+    // Use bot API channel map
+    for (const [groupName, langMap] of Object.entries(_apiChannelMap)) {
+      const entry = langMap[lang.toLowerCase()] || langMap[Object.keys(langMap)[0]];
+      if (!entry) continue;
+      if (!firstId) { firstId = entry.id; firstName = '#' + entry.name; }
+      html += `<div class="channel-group-lbl">${_escHtml(groupName)}</div>`;
+      html += `<button class="ch-btn" onclick="switchCh('${entry.id}','#${_escHtml(entry.name)}','${lang}','${color}',this)">
+        <div class="lang-dot" style="background:${color}"></div>#${_escHtml(entry.name)}
+      </button>`;
     }
   } else {
-    // Fallback to static LANG_CHANNELS until bot has synced
+    // Static fallback until bot has synced
     const groups = LANG_CHANNELS[lang] || LANG_CHANNELS['EN'];
-    groups.forEach((g, gi) => {
+    groups.forEach(g => {
       html += `<div class="channel-group-lbl">${g.group}</div>`;
-      g.channels.forEach((ch, ci) => {
+      g.channels.forEach(ch => {
         html += `<button class="ch-btn" onclick="switchCh(null,'${ch.label}','${lang}','${color}',this)">
           <div class="lang-dot" style="background:${color}"></div>${ch.label}
         </button>`;
@@ -2376,59 +2396,9 @@ function rebuildChannelList(lang) {
     firstBtn.classList.add('active');
     if (firstId) {
       switchCh(firstId, firstName, lang, color, firstBtn);
-    }
-  }
-}
-
-// ── Store raw token (for future send support) ──────────────────────────────
-let _rawPortalToken = '';
-
-// ── Send a message ─────────────────────────────────────────────────────────
-function sendMsg() {
-  // Chat is currently read-only — messages are sent via Discord directly.
-  // The input box is disabled; this function is a no-op placeholder.
-}
-
-// ── Build channel sidebar ──────────────────────────────────────────────────
-function rebuildChannelList(lang) {
-  const scroll  = document.getElementById('channel-scroll');
-  const color   = LANGS[lang]?.color || '#378ADD';
-  let html = '';
-
-  if (_apiChannelMap) {
-    // Use real channel map from the bot API
-    for (const [groupName, langMap] of Object.entries(_apiChannelMap)) {
-      const entry = langMap[lang.toLowerCase()] || langMap[Object.keys(langMap)[0]];
-      if (!entry) continue;
-      html += `<div class="channel-group-lbl">${_escHtml(groupName)}</div>`;
-      html += `<button class="ch-btn" onclick="switchCh('${entry.id}','#${_escHtml(entry.name)}','${lang}','${color}',this)">
-        <div class="lang-dot" style="background:${color}"></div>#${_escHtml(entry.name)}
-      </button>`;
-    }
-  } else {
-    // Fallback: static LANG_CHANNELS
-    const groups = LANG_CHANNELS[lang] || LANG_CHANNELS['EN'];
-    groups.forEach((g, gi) => {
-      html += `<div class="channel-group-lbl">${g.group}</div>`;
-      g.channels.forEach((ch, ci) => {
-        const isFirst = gi === 0 && ci === 0;
-        html += `<button class="ch-btn${isFirst?' active':''}" onclick="switchCh(null,'${ch.label}','${lang}','${color}',this)">
-          <div class="lang-dot" style="background:${color}"></div>${ch.label}
-        </button>`;
-      });
-    });
-  }
-
-  scroll.innerHTML = html;
-
-  // Auto-select first channel
-  const firstBtn = scroll.querySelector('.ch-btn');
-  if (firstBtn) {
-    firstBtn.classList.add('active');
-    // Extract channel info from onclick
-    const match = firstBtn.getAttribute('onclick').match(/switchCh\('([^']*)',\s*'([^']*)',/);
-    if (match) {
-      switchCh(match[1] || null, match[2], lang, color, firstBtn);
+    } else {
+      const match = firstBtn.getAttribute('onclick').match(/switchCh\('([^']*)',\s*'([^']*)',/);
+      if (match) switchCh(match[1] || null, match[2], lang, color, firstBtn);
     }
   }
 }
@@ -2583,8 +2553,7 @@ function addLang() {
     rebuildChannelList('EN');
   } catch(e) {
     console.warn('Channel list error (non-fatal):', e);
-  }
-})();
+  }})();
 
 // ── Portal Auth ────────────────────────────────────────────────────────────
 // PORTAL_SECRET must match the value of PORTAL_SECRET env var on the bot.
