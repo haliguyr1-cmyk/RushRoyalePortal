@@ -1361,6 +1361,7 @@
           <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)" data-key="bot_tg">Telegram polling</span><div class="status-pill pill-green"><div class="status-dot" style="background:#2ecc71"></div>Polling</div></div>
           <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)" data-key="bot_voting">Voting cog</span><div class="status-pill pill-green"><div class="status-dot" style="background:#2ecc71"></div>Online</div></div>
           <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)" data-key="bot_slash">Slash commands</span><div class="status-pill pill-green"><div class="status-dot" style="background:#2ecc71"></div>8 synced</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;color:var(--text2)">Firestore (chat DB)</span><div id="firestore-status-pill" class="status-pill pill-gray"><div id="firestore-status-dot" class="status-dot" style="background:#888"></div><span id="firestore-status-text">Connecting…</span></div></div>
         </div>
       </div>
       <div class="card">
@@ -2545,12 +2546,23 @@ function addLang() {
 
 // ── Init ──────────────────────────────────────────────────────────────────
 (async function initChat() {
+  const dot  = document.getElementById('firestore-status-dot');
+  const text = document.getElementById('firestore-status-text');
+  const pill = document.getElementById('firestore-status-pill');
   try {
     if (_initFirebase()) {
       await _loadChannelMeta();
+      if (dot)  dot.style.background = '#2ecc71';
+      if (text) text.textContent     = 'Connected';
+      if (pill) { pill.classList.remove('pill-gray'); pill.classList.add('pill-green'); }
+    } else {
+      if (dot)  dot.style.background = '#e74c3c';
+      if (text) text.textContent     = 'Not configured';
     }
   } catch(e) {
     console.warn('Firebase init error (non-fatal, chat disabled):', e);
+    if (dot)  dot.style.background = '#e74c3c';
+    if (text) text.textContent     = 'Error';
   }
   try {
     rebuildChannelList('EN');
