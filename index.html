@@ -1404,9 +1404,23 @@
 </script>
 <script>
 // ══════════════════════════════════════════════════════════════
-// PORTAL CONFIGURATION — edit these two values after deployment
+// PORTAL CONFIGURATION
+// _PORTAL_SECRET must exactly match the PORTAL_SECRET env var
+// set on your bot. Check your .env file and paste it below.
 // ══════════════════════════════════════════════════════════════
-const _PORTAL_SECRET = 'change_me_in_production';
+const _PORTAL_SECRET = (function() {
+  // ⚠️  REPLACE THIS VALUE with your bot's PORTAL_SECRET env var.
+  // It must be identical to what's in your .env / server environment.
+  // If they don't match, the login spinner will hang forever.
+  const secret = 'change_me_in_production';
+  if (secret === 'change_me_in_production') {
+    console.error(
+      '⚠️  PORTAL: _PORTAL_SECRET is still the default placeholder.\n' +
+      'Open index.html and set _PORTAL_SECRET to match your bot\'s PORTAL_SECRET env var.'
+    );
+  }
+  return secret;
+})();
 const _PORTAL_URL = 'https://rush-royale-portal.vercel.app';
 // ══════════════════════════════════════════════════════════════
 
