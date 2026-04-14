@@ -2450,10 +2450,6 @@ async function _loadApiChannels() {
   }
 }
 
-// ── Store raw token for sending ────────────────────────────────────────────
-// Captured when the user logs in; passed to POST /messages as Bearer token.
-let _rawPortalToken = '';
-
 // ── Clans ─────────────────────────────────────────────────────────────────
 function saveClan() {
   const name = document.getElementById('clan-name').value.trim();
