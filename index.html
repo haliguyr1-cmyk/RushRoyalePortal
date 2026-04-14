@@ -1404,23 +1404,9 @@
 </script>
 <script>
 // ══════════════════════════════════════════════════════════════
-// PORTAL CONFIGURATION
-// _PORTAL_SECRET must exactly match the PORTAL_SECRET env var
-// set on your bot. Check your .env file and paste it below.
+// PORTAL CONFIGURATION — edit these two values after deployment
 // ══════════════════════════════════════════════════════════════
-const _PORTAL_SECRET = (function() {
-  // ⚠️  REPLACE THIS VALUE with your bot's PORTAL_SECRET env var.
-  // It must be identical to what's in your .env / server environment.
-  // If they don't match, the login spinner will hang forever.
-  const secret = 'change_me_in_production';
-  if (secret === 'change_me_in_production') {
-    console.error(
-      '⚠️  PORTAL: _PORTAL_SECRET is still the default placeholder.\n' +
-      'Open index.html and set _PORTAL_SECRET to match your bot\'s PORTAL_SECRET env var.'
-    );
-  }
-  return secret;
-})();
+const _PORTAL_SECRET = 'change_me_in_production';
 const _PORTAL_URL = 'https://rush-royale-portal.vercel.app';
 // ══════════════════════════════════════════════════════════════
 
@@ -1430,12 +1416,13 @@ const _PORTAL_URL = 'https://rush-royale-portal.vercel.app';
 // → copy the firebaseConfig object values below.
 // ══════════════════════════════════════════════════════════════
 const FIREBASE_CONFIG = {
-  apiKey:            "YOUR_API_KEY",
+  apiKey:            "AIzaSyAHhqc2hzOUunXqpaegtHpELhQ5be51oDE",
   authDomain:        "rrunoficialportal.firebaseapp.com",
   projectId:         "rrunoficialportal",
   storageBucket:     "rrunoficialportal.firebasestorage.app",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID",
+  messagingSenderId: "252133516642",
+  appId:             "1:252133516642:web:2fd0d7a702905dbc1e383b",
+  measurementId:     "G-NRTRV71B8S",
 };
 // ══════════════════════════════════════════════════════════════
 
@@ -2562,10 +2549,18 @@ function addLang() {
 
 // ── Init ──────────────────────────────────────────────────────────────────
 (async function initChat() {
-  if (_initFirebase()) {
-    await _loadChannelMeta();
+  try {
+    if (_initFirebase()) {
+      await _loadChannelMeta();
+    }
+  } catch(e) {
+    console.warn('Firebase init error (non-fatal, chat disabled):', e);
   }
-  rebuildChannelList('EN');
+  try {
+    rebuildChannelList('EN');
+  } catch(e) {
+    console.warn('Channel list error (non-fatal):', e);
+  }
 })();
 
 // ── Portal Auth ────────────────────────────────────────────────────────────
