@@ -948,7 +948,7 @@
     <button class="nav-btn" id="nav-clans" onclick="showPage('clans',this)" data-key="nav_clans">Committed Clans</button>
     <button class="nav-btn" id="nav-action" onclick="showPage('action',this)" data-key="nav_action">Action Plan</button>
     <button class="nav-btn" id="nav-election" onclick="showPage('election',this)" data-key="nav_election">Election</button>
-    <button class="nav-btn" id="nav-chat" onclick="window.open('chat.html','_blank')" data-key="nav_chat">Chat</button>
+    <button class="nav-btn" id="nav-chat" onclick="showPage('chat',this)" data-key="nav_chat">Chat</button>
     <button class="nav-btn" id="nav-admin" onclick="showPage('admin',this)" style="display:none" data-key="nav_admin">Admin</button>
   </div>
   <!-- Controls: user chip + [lang above hamburger] -->
@@ -986,7 +986,7 @@
   <button class="nav-btn" id="mob-nav-clans" onclick="showPageMobile('clans')" data-key="nav_clans">Committed Clans</button>
   <button class="nav-btn" id="mob-nav-action" onclick="showPageMobile('action')" data-key="nav_action">Action Plan</button>
   <button class="nav-btn" id="mob-nav-election" onclick="showPageMobile('election')" data-key="nav_election">Election</button>
-  <button class="nav-btn" id="mob-nav-chat" onclick="window.open('chat.html','_blank')" data-key="nav_chat">Chat</button>
+  <button class="nav-btn" id="mob-nav-chat" onclick="showPageMobile('chat')" data-key="nav_chat">Chat</button>
   <button class="nav-btn" id="mob-nav-admin" onclick="showPageMobile('admin')" style="display:none" data-key="nav_admin">Admin</button>
 </div>
 
@@ -1337,40 +1337,67 @@
 <div id="page-chat" class="page">
   <div class="page-title" data-key="chat_title">Channel Chat</div>
 
-  <!-- Live status bar -->
-  <div id="chat-status-bar" style="display:none;align-items:center;gap:8px;margin-bottom:0.75rem;font-size:12px;color:var(--text2)">
-    <div id="chat-live-dot" style="width:7px;height:7px;border-radius:50%;background:#2ecc71;flex-shrink:0"></div>
-    <span id="chat-status-text">Connected — messages sync in real time</span>
-    <span style="margin-left:auto;color:var(--text3)" id="chat-last-updated"></span>
-  </div>
-
-  <!-- API not configured notice (shown when API_BASE is empty) -->
-  <div id="chat-api-notice" style="display:none;background:rgba(212,160,23,0.06);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius);padding:0.9rem 1.1rem;margin-bottom:0.75rem;font-size:13px;color:var(--text2);line-height:1.55">
-    <strong style="color:var(--gold)">⚙ Bot API not configured</strong> — set <code style="background:var(--bg4);padding:1px 5px;border-radius:3px;font-size:11px;color:var(--gold-light)">CHAT_API_BASE</code> at the top of this file to your bot's API address (e.g. <code style="background:var(--bg4);padding:1px 5px;border-radius:3px;font-size:11px;color:var(--gold-light)">http://localhost:8765</code>) to enable live Discord chat. Showing placeholder channels below.
-  </div>
-
-  <div class="chat-layout">
+  <div class="chat-layout" style="height:560px">
+    <!-- Sidebar: channels -->
     <div class="channel-list">
       <div class="channel-list-hdr" data-key="channels_hdr">Channels</div>
       <div class="channel-scroll" id="channel-scroll">
-        <!-- Populated by JS: either from bot API or LANG_CHANNELS fallback -->
+        <!-- Populated by JS -->
       </div>
     </div>
-    <div class="chat-panel">
+
+    <!-- Chat area -->
+    <div class="chat-panel" style="position:relative;display:flex;flex-direction:column;overflow:hidden">
       <div class="chat-hdr">
-        <div class="lang-dot" id="chat-dot" style="background:#378ADD;width:10px;height:10px;border-radius:50%"></div>
+        <div class="lang-dot" id="chat-dot" style="background:#378ADD;width:10px;height:10px;border-radius:50%;flex-shrink:0"></div>
         <div style="flex:1">
           <div class="chat-hdr-name" id="chat-ch-name">#international-chat</div>
           <div class="chat-hdr-sub" id="chat-ch-sub">Select a channel</div>
         </div>
-        <!-- Live / polling indicator -->
         <div id="chat-conn-badge" style="display:none;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(39,174,96,0.1);color:#2ecc71;border:1px solid rgba(39,174,96,0.2)">● LIVE</div>
       </div>
-      <div class="chat-messages" id="chat-messages">
+
+      <!-- Status bar -->
+      <div id="chat-status-bar" style="display:none;align-items:center;gap:8px;padding:5px 16px;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);background:var(--bg3);flex-shrink:0">
+        <div id="chat-live-dot" style="width:6px;height:6px;border-radius:50%;background:#2ecc71;flex-shrink:0"></div>
+        <span id="chat-status-text">Connected — messages sync in real time</span>
+        <span style="margin-left:auto;color:var(--text3)" id="chat-last-updated"></span>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages" id="chat-messages" style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:2px">
         <div style="text-align:center;color:var(--text3);font-size:13px;padding:3rem 0" id="chat-welcome">Select a channel to begin</div>
       </div>
-      <div class="chat-input-area">
-        <input class="chat-input" id="chat-input" placeholder="Select a channel..." onkeydown="if(event.key==='Enter')sendMsg()" disabled>
+
+      <!-- Reply bar -->
+      <div id="reply-bar" style="display:none;align-items:center;gap:8px;padding:7px 16px;background:var(--bg3);border-top:1px solid var(--border);font-size:12px;color:var(--text2);flex-shrink:0">
+        <span style="color:var(--gold);font-size:13px">↩</span>
+        <span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Replying to <strong id="reply-author" style="color:var(--gold)"></strong>: <span id="reply-preview"></span></span>
+        <button onclick="cancelReply()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:2px;font-family:'Inter',sans-serif" title="Cancel reply">✕</button>
+      </div>
+
+      <!-- Picker panel -->
+      <div id="picker-panel" style="position:absolute;bottom:58px;right:14px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;width:340px;max-height:360px;z-index:500;display:none;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+        <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0">
+          <button id="ptab-emoji" onclick="switchPickerTab('emoji')" style="flex:1;padding:8px;font-size:18px;background:var(--bg3);border:none;border-bottom:2px solid var(--gold);cursor:pointer">😊</button>
+          <button id="ptab-sticker" onclick="switchPickerTab('sticker')" style="flex:1;padding:8px;font-size:18px;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer" title="Stickers">🎭</button>
+          <button id="ptab-gif" onclick="switchPickerTab('gif')" style="flex:1;padding:8px;font-size:13px;font-weight:700;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer">GIF</button>
+        </div>
+        <div id="picker-search-wrap" style="padding:8px 10px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0">
+          <input id="picker-search-input" placeholder="Search…" oninput="renderPicker()" style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif">
+        </div>
+        <div id="picker-body" style="overflow-y:auto;flex:1;padding:8px"></div>
+      </div>
+
+      <!-- Input area -->
+      <div class="chat-input-area" style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <button id="picker-toggle-btn" onclick="togglePicker()" title="Emoji / Stickers / GIFs" style="background:none;border:none;cursor:pointer;font-size:18px;line-height:1;padding:4px;border-radius:6px;transition:background 0.1s;color:var(--text2)">😊</button>
+        <textarea class="chat-input" id="chat-input" rows="1"
+          placeholder="Select a channel..."
+          onkeydown="onChatInputKeydown(event)"
+          oninput="autoResizeChatInput(this)"
+          disabled
+          style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);resize:none;line-height:1.4;max-height:120px;transition:border-color 0.15s"></textarea>
         <button class="chat-send" id="chat-send-btn" onclick="sendMsg()" data-key="send_btn" disabled>Send</button>
       </div>
     </div>
@@ -2214,22 +2241,39 @@ function _renderMsg(m, container, scrollToBottom) {
     ? `<img src="${_escHtml(m.avatar)}" class="msg-avatar" style="object-fit:cover" onerror="this.outerHTML='<div class=\\'msg-avatar\\' style=\\'background:${color};color:#fff\\'>${initials}</div>'">`
     : `<div class="msg-avatar" style="background:${color};color:#fff">${initials}</div>`;
 
-  let bodyHtml = '';
+  // Reply quote
+  let replyHtml = '';
+  if (m.reply_to) {
+    replyHtml = `<div style="background:var(--bg3);border-left:3px solid var(--gold);border-radius:0 4px 4px 0;padding:4px 8px;margin-bottom:4px;font-size:12px;color:var(--text3);display:flex;gap:6px;overflow:hidden"><span style="font-weight:600;color:var(--gold);white-space:nowrap">${_escHtml(m.reply_to.author)}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${_escHtml((m.reply_to.content||'').slice(0,80))}</span></div>`;
+  }
+
+  let bodyHtml = replyHtml;
   if (m.content) bodyHtml += `<div class="msg-text">${_escHtml(m.content)}</div>`;
   for (const att of (m.attachments || [])) {
-    if (att.is_image) {
+    if (att.is_sticker) {
+      bodyHtml += `<span style="font-size:48px;display:block;margin-top:4px">${_escHtml(att.emoji||'')}</span>`;
+    } else if (att.is_gif || (att.is_image && att.url && att.url.includes('.gif'))) {
+      bodyHtml += `<img src="${_escHtml(att.url)}" style="max-width:320px;border-radius:6px;margin-top:5px;display:block" loading="lazy">`;
+    } else if (att.is_image) {
       bodyHtml += `<img src="${_escHtml(att.url)}" style="max-width:280px;max-height:200px;border-radius:6px;margin-top:6px;display:block" loading="lazy">`;
-    } else {
-      bodyHtml += `<a href="${_escHtml(att.url)}" target="_blank" style="font-size:12px;color:var(--gold);display:block;margin-top:4px">📎 ${_escHtml(att.filename)}</a>`;
+    } else if (att.url) {
+      bodyHtml += `<a href="${_escHtml(att.url)}" target="_blank" style="font-size:12px;color:var(--gold);display:block;margin-top:4px">📎 ${_escHtml(att.filename||'file')}</a>`;
     }
   }
+
+  const safeId      = (m.id||'').replace(/'/g,"\\'");
+  const safeAuthor  = (m.author||'').replace(/'/g,"\\'");
+  const safeContent = (m.content||'').slice(0,80).replace(/'/g,"\\'");
 
   const div = document.createElement('div');
   div.className    = 'msg';
   div.dataset.msgId = m.id;
+  div.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:3px 6px;border-radius:6px;transition:background 0.1s';
+  div.onmouseenter = function(){ this.style.background='var(--bg3)'; const a=this.querySelector('.msg-action');if(a)a.style.opacity='1'; };
+  div.onmouseleave = function(){ this.style.background=''; const a=this.querySelector('.msg-action');if(a)a.style.opacity='0'; };
   div.innerHTML = `
     ${avatarHtml}
-    <div class="msg-body">
+    <div class="msg-body" style="flex:1;min-width:0">
       <div class="msg-hdr">
         <span class="msg-author" style="color:${color}">${_escHtml(m.author)}</span>
         ${m.source === 'portal'
@@ -2240,7 +2284,8 @@ function _renderMsg(m, container, scrollToBottom) {
         <span class="msg-time">${_fmtTime(m.timestamp)}</span>
       </div>
       ${bodyHtml}
-    </div>`;
+    </div>
+    <button class="msg-action" onclick="startReply('${safeId}','${safeAuthor}','${safeContent}')" style="background:var(--bg4);border:1px solid var(--border);border-radius:5px;padding:3px 7px;font-size:12px;cursor:pointer;color:var(--text2);font-family:'Inter',sans-serif;opacity:0;transition:opacity 0.15s;flex-shrink:0;align-self:center">↩</button>`;
   container.appendChild(div);
   if (scrollToBottom) container.scrollTop = container.scrollHeight;
 }
@@ -2386,14 +2431,19 @@ function switchCh(channelId, chName, lang, color, btn) {
 let _rawPortalToken = '';
 
 // ── Send a message ─────────────────────────────────────────────────────────
-async function sendMsg() {
+async function sendMsg(overrideContent, overrideAttachments) {
   if (!SESSION || !_activeChanId || !_firestoreDb) return;
   const inp = document.getElementById('chat-input');
-  const content = (inp.value || '').trim();
-  if (!content || content.length > 2000) return;
+  const content = overrideContent !== undefined ? overrideContent : (inp.value || '').trim();
+  const attachments = overrideAttachments || [];
+  if (!content && !attachments.length) return;
+  if (content.length > 2000) return;
 
   // Optimistically clear input right away
-  inp.value = '';
+  if (overrideContent === undefined) {
+    inp.value = '';
+    autoResizeChatInput(inp);
+  }
 
   const { collection, addDoc, serverTimestamp } = window.firebaseFirestore;
 
@@ -2405,7 +2455,6 @@ async function sendMsg() {
     ? defaultDiscordAvatar
     : 'https://telegram.org/img/t_logo.png';
 
-  const platformLabel = SESSION.platform === 'discord' ? '⚡' : '✈';
   const displayName   = `${SESSION.uname}`;
 
   const msgDoc = {
@@ -2413,27 +2462,28 @@ async function sendMsg() {
     author:      displayName,
     avatar:      avatar,
     content:     content,
+    attachments: attachments,
     timestamp:   new Date().toISOString(),
     is_webhook:  false,
     is_bot:      false,
     source:      'portal',
-    _forwarded:  false,              // ← bot sets this to true after forwarding
+    _forwarded:  false,
     platform:    SESSION.platform,
     sender_uid:  SESSION.uid,
     channel_id:  _activeChanId,
+    ...(_replyTo ? { reply_to: _replyTo } : {}),
   };
 
+  cancelReply();
+
   try {
-    // Write to portal_outbox — a flat top-level collection the bot polls every 3s.
-    // The bot forwards it to Discord then marks _forwarded=true.
-    // We also write it directly into the channel's msgs so it shows instantly in chat.
     const outboxRef = collection(_firestoreDb, 'portal_outbox');
     const msgsRef   = collection(_firestoreDb, 'messages', _activeChanId, 'msgs');
     await addDoc(outboxRef, { ...msgDoc });
-    await addDoc(msgsRef,   { ...msgDoc, _forwarded: true }); // already shown, skip re-forward
+    await addDoc(msgsRef,   { ...msgDoc, _forwarded: true });
   } catch(e) {
     console.error('Send failed:', e);
-    inp.value = content; // restore on failure
+    if (overrideContent === undefined) inp.value = content;
   }
 }
 
@@ -2948,6 +2998,140 @@ function signOut() {
   // No token in URL — show fallback form straight away (no spinner needed)
   _showFallback(null);
 })();
+
+// ── Reply ──────────────────────────────────────────────────────────────────
+let _replyTo = null;
+function startReply(msgId, author, content) {
+  _replyTo = { id: msgId, author, content };
+  document.getElementById('reply-author').textContent  = author;
+  document.getElementById('reply-preview').textContent = content.slice(0, 60) + (content.length > 60 ? '…' : '');
+  const bar = document.getElementById('reply-bar');
+  if (bar) bar.style.display = 'flex';
+  document.getElementById('chat-input').focus();
+}
+function cancelReply() {
+  _replyTo = null;
+  const bar = document.getElementById('reply-bar');
+  if (bar) bar.style.display = 'none';
+}
+
+// ── Input helpers ──────────────────────────────────────────────────────────
+function onChatInputKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+}
+function autoResizeChatInput(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// ── Emoji / Sticker / GIF Picker ───────────────────────────────────────────
+const EMOJI_DATA = {
+  'Smileys': ['😀','😂','😍','🥰','😎','😭','😤','🤔','😏','🥳','😴','🤯','😈','🎉','❤️','🔥','👍','👏','🙌','💪','🤝','🫡','💀','👀','💯','🚀','⚔️','🛡️','⭐','💎'],
+  'Gaming':  ['🎮','🕹️','🏆','🥇','🎯','⚡','🌟','💥','🗡️','🏹','🧙','🐉','👑','🌍','🔮','🎲','🃏','🎖️','⚙️','🔧'],
+  'Nature':  ['🌸','🌊','🌙','☀️','⛅','🌈','❄️','🍀','🌿','🦁','🐯','🦊','🐺','🦅','🐍','🌺','🍁','🌾','⛰️','🌋'],
+};
+const STICKER_DATA = [
+  {emoji:'⚔️🔥',label:'Battle Cry'},{emoji:'🛡️💪',label:'Defend'},{emoji:'👑🌟',label:'Victory'},
+  {emoji:'💀☠️',label:'GG'},{emoji:'🚀⚡',label:'Speed'},{emoji:'🐉🔥',label:'Dragon'},
+  {emoji:'🤝💎',label:'Alliance'},{emoji:'😤⚡',label:'Rage'},{emoji:'🎯✨',label:'Perfect'},
+  {emoji:'🥳🎉',label:'Party'},{emoji:'🏆🌟',label:'Champion'},{emoji:'🔮💥',label:'Magic'},
+  {emoji:'🦁🦁',label:'Pride'},{emoji:'🙌💯',label:'Respect'},{emoji:'😂🤣',label:'LOL'},{emoji:'❤️🔥',label:'Love'},
+];
+const GIF_DATA = [
+  {label:'GG',url:'https://media.tenor.com/tEBSAONMYT8AAAAC/gg-good-game.gif'},
+  {label:'Victory',url:'https://media.tenor.com/YqeKyQ7U4CAAAAAC/victory-winner.gif'},
+  {label:'Rage',url:'https://media.tenor.com/IjKlKLBqeRUAAAAC/rage-angry.gif'},
+  {label:"Let's Go",url:'https://media.tenor.com/yd7T0j5iOGwAAAAC/lets-go-excited.gif'},
+  {label:'Clap',url:'https://media.tenor.com/bNgNJE8WNPAAAAAC/clap-clapping.gif'},
+  {label:'Nooo',url:'https://media.tenor.com/oHFLVCMDpIAAAAAC/nooo-no.gif'},
+  {label:'POG',url:'https://media.tenor.com/HZDDVOsBCokAAAAC/pog-champion.gif'},
+  {label:'PepeLaugh',url:'https://media.tenor.com/OJJCmcWf2DIAAAAC/pepe-laugh.gif'},
+];
+
+let _pickerOpen = false;
+let _pickerMode = 'emoji';
+
+function togglePicker() {
+  _pickerOpen = !_pickerOpen;
+  const panel = document.getElementById('picker-panel');
+  if (!panel) return;
+  panel.style.display = _pickerOpen ? 'flex' : 'none';
+  if (_pickerOpen) {
+    document.getElementById('picker-search-input').value = '';
+    renderPicker();
+  }
+}
+function switchPickerTab(mode) {
+  _pickerMode = mode;
+  ['emoji','sticker','gif'].forEach(m => {
+    const t = document.getElementById('ptab-' + m);
+    if (t) {
+      t.style.background    = m === mode ? 'var(--bg3)' : 'none';
+      t.style.borderBottom  = m === mode ? '2px solid var(--gold)' : '2px solid transparent';
+    }
+  });
+  const sw = document.getElementById('picker-search-wrap');
+  if (sw) sw.style.display = mode === 'gif' ? 'none' : '';
+  document.getElementById('picker-search-input').value = '';
+  renderPicker();
+}
+function renderPicker() {
+  const body = document.getElementById('picker-body');
+  if (!body) return;
+  const q = (document.getElementById('picker-search-input').value || '').trim().toLowerCase();
+  if (_pickerMode === 'emoji') {
+    let html = '';
+    for (const [cat, emojis] of Object.entries(EMOJI_DATA)) {
+      const filtered = q ? emojis.filter(e => e.includes(q)) : emojis;
+      if (!filtered.length) continue;
+      html += `<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:4px 2px 6px">${cat}</div><div style="display:flex;flex-wrap:wrap;gap:2px">`;
+      filtered.forEach(e => { html += `<button onclick="insertEmoji('${e}')" style="font-size:22px;background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;line-height:1" title="${e}">${e}</button>`; });
+      html += '</div>';
+    }
+    body.innerHTML = html || '<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px">No emoji found</div>';
+  } else if (_pickerMode === 'sticker') {
+    const items = q ? STICKER_DATA.filter(s => s.label.toLowerCase().includes(q)) : STICKER_DATA;
+    let html = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">';
+    items.forEach(s => {
+      html += `<button onclick="sendPickerSticker('${s.emoji}','${s.label}')" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px;cursor:pointer;font-size:26px;text-align:center;line-height:1.4;font-family:'Inter',sans-serif" title="${s.label}"><div>${s.emoji}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${s.label}</div></button>`;
+    });
+    body.innerHTML = html + '</div>' || '<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px">No stickers found</div>';
+  } else {
+    let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
+    GIF_DATA.forEach(g => {
+      html += `<button onclick="sendPickerGif('${g.url}','${g.label}')" style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;padding:0;display:block;font-size:0" title="${g.label}"><img src="${g.url}" alt="${g.label}" loading="lazy" style="width:100%;height:80px;object-fit:cover;display:block"><span style="font-size:10px;color:var(--text2);padding:3px 6px;text-align:center;display:block;font-family:'Inter',sans-serif">${g.label}</span></button>`;
+    });
+    body.innerHTML = html + '</div>';
+  }
+}
+function insertEmoji(emoji) {
+  const inp = document.getElementById('chat-input');
+  const pos = inp.selectionStart;
+  inp.value = inp.value.slice(0, pos) + emoji + inp.value.slice(inp.selectionEnd);
+  inp.selectionStart = inp.selectionEnd = pos + emoji.length;
+  inp.focus();
+  autoResizeChatInput(inp);
+  togglePicker();
+}
+function sendPickerSticker(emoji, label) {
+  togglePicker();
+  if (!SESSION || !_activeChanId || !_firestoreDb) return;
+  sendMsg('', [{ is_sticker: true, emoji, label, url: '', filename: label }]);
+}
+function sendPickerGif(url, label) {
+  togglePicker();
+  if (!SESSION || !_activeChanId || !_firestoreDb) return;
+  sendMsg('', [{ is_gif: true, is_image: false, url, filename: label }]);
+}
+
+// Close picker on outside click
+document.addEventListener('click', e => {
+  if (_pickerOpen && !e.target.closest('#picker-panel') && !e.target.closest('#picker-toggle-btn')) {
+    _pickerOpen = false;
+    const p = document.getElementById('picker-panel');
+    if (p) p.style.display = 'none';
+  }
+});
 
 </script>
 </body>
