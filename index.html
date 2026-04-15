@@ -841,6 +841,57 @@
     background: var(--gold); flex-shrink: 0; margin-top: 6px;
   }
 
+  /* ── Clans page ─────────────────────────────────────────────────────────── */
+  .poster-group {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .poster-group-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .poster-group-header:hover { background: var(--bg4); }
+  .poster-avatar {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(212,160,23,0.12);
+    border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: var(--gold);
+    flex-shrink: 0; font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+  }
+  .poster-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+  .poster-clan-count { font-size: 11px; color: var(--text3); }
+  .poster-chevron { font-size: 10px; color: var(--text3); transition: transform 0.2s; }
+  .poster-group.collapsed .poster-chevron { transform: rotate(-90deg); }
+  .poster-clan-list { padding: 6px 0; }
+  .poster-group.collapsed .poster-clan-list { display: none; }
+  .clan-list-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .clan-list-item:last-child { border-bottom: none; }
+  .clan-list-item.hidden { display: none; }
+  .clan-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold); flex-shrink: 0; opacity: 0.6;
+  }
+  .clan-list-name { font-size: 13px; color: var(--text); flex: 1; }
+  .clan-list-tag {
+    font-size: 10px; font-weight: 700; color: var(--gold-dark);
+    background: rgba(212,160,23,0.08);
+    border: 1px solid rgba(212,160,23,0.18);
+    border-radius: 4px; padding: 1px 6px;
+  }
+
 </style>
 </head>
 <body>
@@ -1055,43 +1106,35 @@
 
 <!-- ══ COMMITTED CLANS ══ -->
 <div id="page-clans" class="page">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem">
     <div class="page-title" style="margin:0" data-key="clans_title">Committed Clans</div>
-    <button class="btn" onclick="saveClan()" data-key="add_clan">+ Add Clan</button>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <input class="form-input" id="clan-search" placeholder="Search clans or posters…" style="width:200px;margin:0" oninput="filterClans(this.value)">
+      <span id="clan-total-badge" class="badge badge-gold" style="white-space:nowrap">Loading…</span>
+    </div>
   </div>
-  <div class="grid2">
-    <div class="card">
-      <div class="card-title"><span data-key="committed_label">Committed</span> (<span id="clan-count">6</span>)</div>
-      <div id="clan-list">
-        <div class="clan-row"><div class="clan-avatar">SR</div><div style="flex:1"><div class="clan-name">Shadow Royale</div><div class="clan-sub"><span data-key="leader_lbl">Leader</span>: xKingSlayer · 30 <span data-key="members_lbl">members</span> · EN</div></div><span class="badge badge-gold" data-key="status_elite">Elite</span></div>
-        <div class="clan-row"><div class="clan-avatar">IC</div><div style="flex:1"><div class="clan-name">Iron Citadel</div><div class="clan-sub"><span data-key="leader_lbl">Leader</span>: DesertFox_RU · 28 <span data-key="members_lbl">members</span> · RU</div></div><span class="badge badge-green" data-key="status_active">Active</span></div>
-        <div class="clan-row"><div class="clan-avatar">TB</div><div style="flex:1"><div class="clan-name">Thunder Brigade</div><div class="clan-sub"><span data-key="leader_lbl">Leader</span>: ThunderChief · 27 <span data-key="members_lbl">members</span> · EN</div></div><span class="badge badge-green" data-key="status_active">Active</span></div>
-        <div class="clan-row"><div class="clan-avatar">NF</div><div style="flex:1"><div class="clan-name">Neon Fist</div><div class="clan-sub"><span data-key="leader_lbl">Leader</span>: NeonKing_DE · 25 <span data-key="members_lbl">members</span> · DE</div></div><span class="badge badge-green" data-key="status_active">Active</span></div>
-        <div class="clan-row"><div class="clan-avatar">SC</div><div style="flex:1"><div class="clan-name">Steel Crown</div><div class="clan-sub"><span data-key="leader_lbl">Leader</span>: CrownMaster · 24 <span data-key="members_lbl">members</span> · EN</div></div><span class="badge badge-gray" data-key="status_pending">Pending</span></div>
-        <div class="clan-row"><div class="clan-avatar">RW</div><div style="flex:1"><div class="clan-name">Red Wolf</div><div class="clan-sub"><span data-key="leader_lbl">Leader</span>: RedAlpha_ES · 22 <span data-key="members_lbl">members</span> · ES</div></div><span class="badge badge-green" data-key="status_active">Active</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title" data-key="add_edit_clan">Add / Edit Clan</div>
-      <div class="form-row"><label class="form-label" data-key="form_clan_name">Clan Name</label><input class="form-input" id="clan-name" placeholder="e.g. Shadow Royale" data-placeholder="ph_clan_name"></div>
-      <div class="form-row"><label class="form-label" data-key="form_leader">Leader</label><input class="form-input" id="clan-leader" placeholder="Discord username" data-placeholder="ph_discord_user"></div>
-      <div class="form-row"><label class="form-label" data-key="form_members">Members</label><input class="form-input" id="clan-members" type="number" placeholder="30"></div>
-      <div class="form-row"><label class="form-label" data-key="form_status">Status</label>
-        <select class="form-select" id="clan-status">
-          <option data-key="status_active">Active</option><option data-key="status_elite">Elite</option><option data-key="status_pending">Pending</option><option data-key="status_inactive">Inactive</option>
-        </select>
-      </div>
-      <div class="form-row"><label class="form-label" data-key="form_lang_region">Language Region</label>
-        <select class="form-select" id="clan-lang">
-          <option value="EN">English (EN)</option><option value="RU">Russian (RU)</option>
-          <option value="DE">German (DE)</option><option value="ES">Spanish (ES)</option>
-          <option value="FR">French (FR)</option><option value="IT">Italian (IT)</option>
-          <option value="ZH">Chinese (ZH)</option>
-        </select>
-      </div>
-      <div class="form-row"><label class="form-label" data-key="form_notes">Notes</label><input class="form-input" id="clan-notes" placeholder="Optional notes" data-placeholder="ph_optional_notes"></div>
-      <button class="btn" onclick="saveClan()" data-key="save_clan">Save Clan</button>
-    </div>
+
+  <!-- Loading state -->
+  <div id="clans-loading" style="text-align:center;padding:3rem;color:var(--text3)">
+    <div style="font-size:28px;margin-bottom:8px">⚔️</div>
+    <div style="font-size:14px">Loading clans from Firebase…</div>
+  </div>
+
+  <!-- Error state -->
+  <div id="clans-error" style="display:none;text-align:center;padding:3rem;color:#e74c3c">
+    <div style="font-size:28px;margin-bottom:8px">⚠️</div>
+    <div id="clans-error-msg" style="font-size:14px">Failed to load clans.</div>
+  </div>
+
+  <!-- Clan grid — rendered by JS -->
+  <div id="clans-grid" style="display:none">
+
+    <!-- Summary stats row -->
+    <div class="grid3" style="margin-bottom:1.25rem" id="clan-stats-row"></div>
+
+    <!-- Poster groups -->
+    <div id="clan-poster-groups"></div>
+
   </div>
 </div>
 
@@ -2619,6 +2662,162 @@ function addLang() {
   } catch(e) {
     console.warn('Channel list error (non-fatal):', e);
   }})();
+
+// ── Clans — Firebase live loader ───────────────────────────────────────────
+let _allClans   = [];   // flat array of clan docs
+let _clanUnsub  = null; // Firestore real-time listener unsubscribe
+
+function _initClans() {
+  if (!_firestoreDb) return;
+  const { collection, query, where, onSnapshot, getDocs } = window.firebaseFirestore || {};
+  if (!collection) { _showClansError('Firestore API not available.'); return; }
+
+  if (onSnapshot && where) {
+    try {
+      const q = query(collection(_firestoreDb, 'clans'), where('active', '==', true));
+      _clanUnsub = onSnapshot(q, snap => {
+        _allClans = snap.docs.map(d => d.data());
+        _renderClans(_allClans);
+      }, () => { _loadClansOnce(); });
+      return;
+    } catch(e) { /* fall through */ }
+  }
+  _loadClansOnce();
+}
+
+async function _loadClansOnce() {
+  try {
+    const { collection, getDocs } = window.firebaseFirestore || {};
+    if (!getDocs) { _showClansError('Firestore API not available.'); return; }
+    const snap = await getDocs(collection(_firestoreDb, 'clans'));
+    _allClans  = snap.docs.map(d => d.data()).filter(c => c.active !== false);
+    _renderClans(_allClans);
+  } catch(e) {
+    _showClansError(e.message);
+  }
+}
+
+function _showClansError(msg) {
+  document.getElementById('clans-loading').style.display = 'none';
+  document.getElementById('clans-error').style.display = 'block';
+  document.getElementById('clans-error-msg').textContent = msg;
+}
+
+function _initials(name) {
+  return name.replace(/[^a-zA-Z\s]/g, '').trim()
+    .split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '?';
+}
+
+function _renderClans(clans) {
+  document.getElementById('clans-loading').style.display = 'none';
+  document.getElementById('clans-error').style.display   = 'none';
+  document.getElementById('clans-grid').style.display    = 'block';
+
+  // Stats row
+  const posterCount = new Set(clans.map(c => c.poster || 'Unknown')).size;
+  document.getElementById('clan-stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Clans</div><div class="stat-val">${clans.length}</div><div class="stat-sub">committed to the boycott</div></div>
+    <div class="stat-card"><div class="stat-label">Posters / Groups</div><div class="stat-val">${posterCount}</div><div class="stat-sub">clan leaders represented</div></div>
+    <div class="stat-card"><div class="stat-label">Status</div><div class="stat-val" style="font-size:20px;padding:8px 0"><span class="badge badge-green">Active</span></div><div class="stat-sub">live from Firebase</div></div>`;
+
+  // Update the overview stat too
+  const statEl = document.querySelector('.stat-val');
+  if (statEl) statEl.textContent = clans.length;
+
+  // Badge count
+  document.getElementById('clan-total-badge').textContent = clans.length + ' clans';
+
+  // Group by poster
+  const byPoster = {};
+  for (const c of clans) {
+    const p = c.poster || 'Unknown';
+    if (!byPoster[p]) byPoster[p] = [];
+    byPoster[p].push(c);
+  }
+
+  const container = document.getElementById('clan-poster-groups');
+  container.innerHTML = '';
+
+  for (const [poster, posterClans] of Object.entries(byPoster).sort((a,b) => a[0].localeCompare(b[0]))) {
+    const grp = document.createElement('div');
+    grp.className = 'poster-group';
+    grp.dataset.poster = poster.toLowerCase();
+
+    const clanRows = posterClans.map(c => `
+      <div class="clan-list-item" data-clan="${(c.name||'').toLowerCase()}">
+        <div class="clan-dot"></div>
+        <div class="clan-list-name">${_esc(c.name)}</div>
+        ${c.tag ? `<span class="clan-list-tag">${_esc(c.tag)}</span>` : ''}
+      </div>`).join('');
+
+    grp.innerHTML = `
+      <div class="poster-group-header" onclick="togglePosterGroup(this)">
+        <div class="poster-avatar">${_initials(poster)}</div>
+        <div class="poster-name">${_esc(poster)}</div>
+        <div class="poster-clan-count">${posterClans.length} clan${posterClans.length > 1 ? 's' : ''}</div>
+        <div class="poster-chevron">▼</div>
+      </div>
+      <div class="poster-clan-list">${clanRows}</div>`;
+
+    container.appendChild(grp);
+  }
+}
+
+function _esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function togglePosterGroup(header) {
+  header.closest('.poster-group').classList.toggle('collapsed');
+}
+
+function filterClans(q) {
+  q = q.toLowerCase().trim();
+  const groups = document.querySelectorAll('.poster-group');
+  let visibleClans = 0;
+  groups.forEach(grp => {
+    const posterMatch = grp.dataset.poster.includes(q);
+    const items = grp.querySelectorAll('.clan-list-item');
+    let groupVisible = 0;
+    items.forEach(item => {
+      const show = !q || posterMatch || item.dataset.clan.includes(q);
+      item.classList.toggle('hidden', !show);
+      if (show) groupVisible++;
+    });
+    grp.style.display = groupVisible ? '' : 'none';
+    if (groupVisible && q) grp.classList.remove('collapsed');
+    visibleClans += groupVisible;
+  });
+  document.getElementById('clan-total-badge').textContent = visibleClans + ' clans';
+}
+
+// Hook into the existing Firebase ready signal
+const _origFirebaseReady = Object.getOwnPropertyDescriptor(window, '_firebaseReady');
+function _tryInitClans() {
+  if (_firestoreDb) { _initClans(); return; }
+  let waited = 0;
+  const t = setInterval(() => {
+    waited += 100;
+    if (_firestoreDb) { clearInterval(t); _initClans(); }
+    else if (waited > 8000) {
+      clearInterval(t);
+      _showClansError('Firebase not initialised — check your config.');
+    }
+  }, 100);
+}
+
+// Run when the clans tab is first opened (lazy)
+let _clansLoaded = false;
+const _origShowPage = window.showPage;
+window.showPage = function(page, btn) {
+  if (typeof _origShowPage === 'function') _origShowPage(page, btn);
+  if (page === 'clans' && !_clansLoaded) { _clansLoaded = true; _tryInitClans(); }
+};
+const _origShowPageMobile = window.showPageMobile;
+window.showPageMobile = function(page) {
+  if (typeof _origShowPageMobile === 'function') _origShowPageMobile(page);
+  if (page === 'clans' && !_clansLoaded) { _clansLoaded = true; _tryInitClans(); }
+};
 
 // ── Portal Auth ────────────────────────────────────────────────────────────
 // PORTAL_SECRET must match the value of PORTAL_SECRET env var on the bot.
