@@ -1342,7 +1342,12 @@
     <div class="channel-list">
       <div class="channel-list-hdr" data-key="channels_hdr">Channels</div>
       <div class="channel-scroll" id="channel-scroll">
-        <!-- Populated by JS -->
+        <button class="ch-btn active" id="ch-btn-info" onclick="switchCh('1492982005741129919','#info','info','#378ADD',this)">
+          <div class="lang-dot" style="background:#378ADD"></div>#info
+        </button>
+        <button class="ch-btn" id="ch-btn-announcements" onclick="switchCh('1493954042605469797','#announcements','announcements','#e67e22',this)">
+          <div class="lang-dot" style="background:#e67e22"></div>#announcements
+        </button>
       </div>
     </div>
 
@@ -2164,6 +2169,11 @@ function showPageMobile(id) {
   // Close drawer
   document.getElementById('mobile-nav').classList.remove('open');
   document.getElementById('hamburger-btn').classList.remove('open');
+  // Auto-load #info channel when chat tab first opened
+  if (id === 'chat' && !_activeChanId && _firestoreDb) {
+    const infoBtn = document.getElementById('ch-btn-info');
+    switchCh('1492982005741129919', '#info', 'info', '#378ADD', infoBtn);
+  }
 }
 
 function setLang(code, flag, name) {
@@ -2201,6 +2211,11 @@ function showPage(id, btn) {
   // Sync mobile nav
   const mobBtn = document.getElementById('mob-nav-' + id);
   if (mobBtn) mobBtn.classList.add('active');
+  // Auto-load #info channel when chat tab first opened
+  if (id === 'chat' && !_activeChanId && _firestoreDb) {
+    const infoBtn = document.getElementById('ch-btn-info');
+    switchCh('1492982005741129919', '#info', 'info', '#378ADD', infoBtn);
+  }
 }
 
 // ── Live chat state ────────────────────────────────────────────────────────
@@ -2408,7 +2423,8 @@ function switchCh(channelId, chName, lang, color, btn) {
 
   document.getElementById('chat-dot').style.background = color;
   document.getElementById('chat-ch-name').textContent  = chName;
-  document.getElementById('chat-ch-sub').textContent   = lang + ' · Firestore live';
+  const _CH_SUBS = {'1492982005741129919':'Read-only info channel','1493954042605469797':'Server announcements'};
+  document.getElementById('chat-ch-sub').textContent = _CH_SUBS[channelId] || (lang + ' · Firestore live');
 
   const inp     = document.getElementById('chat-input');
   const sendBtn = document.getElementById('chat-send-btn');
@@ -2489,6 +2505,8 @@ async function sendMsg(overrideContent, overrideAttachments) {
 
 // ── Build channel sidebar ──────────────────────────────────────────────────
 function rebuildChannelList(lang) {
+  // Channels are hardcoded in HTML (#info and #announcements) — no rebuild needed
+  return;
   const scroll = document.getElementById('channel-scroll');
   const color  = LANGS[lang]?.color || '#378ADD';
   let html = '';
@@ -2707,11 +2725,12 @@ function addLang() {
     if (dot)  dot.style.background = '#e74c3c';
     if (text) text.textContent     = 'Error';
   }
-  try {
-    rebuildChannelList('EN');
-  } catch(e) {
-    console.warn('Channel list error (non-fatal):', e);
-  }})();
+  // Auto-load #info if chat page is already active on init
+  if (document.getElementById('page-chat')?.classList.contains('active') && !_activeChanId && _firestoreDb) {
+    const infoBtn = document.getElementById('ch-btn-info');
+    switchCh('1492982005741129919', '#info', 'info', '#378ADD', infoBtn);
+  }
+})();
 
 // ── Clans — Firebase live loader ───────────────────────────────────────────
 let _allClans   = [];   // flat array of clan docs
