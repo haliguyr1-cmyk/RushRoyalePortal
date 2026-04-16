@@ -892,6 +892,183 @@
     border-radius: 4px; padding: 1px 6px;
   }
 
+
+  /* ── Embedded Chat Tab ─────────────────────────────────────────────────── */
+  #page-chat { display: none; }
+  #page-chat.active { display: flex; flex-direction: column; }
+  /* Use viewport height minus the topbar so chat fills remaining space */
+  #page-chat { height: calc(100vh - 58px); }
+  @media (max-width: 699px) { #page-chat { height: calc(100vh - 88px); } }
+
+  #chat-layout { display: flex; flex: 1; overflow: hidden; }
+
+  /* Sidebar */
+  #chat-sidebar {
+    width: 180px; flex-shrink: 0;
+    background: var(--bg2); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+  }
+  @media (max-width: 599px) { #chat-sidebar { width: 46px; } #chat-sidebar .cl { display: none; } }
+  #chat-sidebar .sb-hdr {
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+    font-size: 10px; font-weight: 600; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.1em; flex-shrink: 0;
+  }
+  #chat-sidebar .sc-btn {
+    width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+    padding: 9px 12px; font-size: 13px; color: var(--text2);
+    display: flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif;
+    transition: background 0.1s; white-space: nowrap;
+  }
+  #chat-sidebar .sc-btn:hover { background: var(--bg3); color: var(--text); }
+  #chat-sidebar .sc-btn.active { background: rgba(212,160,23,0.08); color: var(--gold); font-weight: 500; }
+  .sc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Chat area */
+  #chat-main {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg2);
+    position: relative;
+  }
+  #chat-tab-hdr {
+    padding: 11px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  }
+  #chat-tab-hdr-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  #chat-tab-hdr-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  #chat-tab-hdr-sub  { font-size: 11px; color: var(--text2); }
+  #chat-tab-conn-badge {
+    margin-left: auto; padding: 2px 8px; border-radius: 10px; font-size: 10px;
+    font-weight: 600; background: rgba(39,174,96,0.1); color: #2ecc71;
+    border: 1px solid rgba(39,174,96,0.2); display: none;
+  }
+  #chat-tab-status-bar {
+    display: none; align-items: center; gap: 8px; padding: 5px 16px;
+    font-size: 11px; color: var(--text2); border-bottom: 1px solid var(--border);
+    background: var(--bg3); flex-shrink: 0;
+  }
+  #chat-tab-status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Messages */
+  #chat-tab-messages {
+    flex: 1; overflow-y: auto; padding: 12px 16px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .ct-msg { display: flex; gap: 10px; align-items: flex-start; padding: 3px 6px;
+            border-radius: 6px; transition: background 0.1s; }
+  .ct-msg:hover { background: var(--bg3); }
+  .ct-msg:hover .ct-msg-actions { opacity: 1; }
+  .ct-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0; overflow: hidden;
+  }
+  .ct-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .ct-body { flex: 1; min-width: 0; }
+  .ct-hdr { display: flex; align-items: baseline; gap: 6px; margin-bottom: 2px; flex-wrap: wrap; }
+  .ct-author { font-size: 13px; font-weight: 600; }
+  .ct-time   { font-size: 11px; color: var(--text3); }
+  .ct-badge  { font-size: 10px; background: rgba(41,128,185,0.15); color: #5dade2;
+               border: 1px solid rgba(41,128,185,0.25); border-radius: 10px; padding: 0 5px; }
+  .ct-badge.portal { background: rgba(212,160,23,0.15); color: var(--gold); border-color: rgba(212,160,23,0.3); }
+  .ct-text { font-size: 13px; color: var(--text2); line-height: 1.55; word-break: break-word; }
+  .ct-img  { max-width: 280px; max-height: 200px; border-radius: 6px; margin-top: 5px; display: block; }
+  .ct-gif  { max-width: 320px; border-radius: 6px; margin-top: 5px; display: block; }
+  .ct-reply-quote {
+    background: var(--bg3); border-left: 3px solid var(--gold);
+    border-radius: 0 4px 4px 0; padding: 4px 8px; margin-bottom: 4px;
+    font-size: 12px; color: var(--text3); display: flex; gap: 6px;
+  }
+  .ct-reply-author { font-weight: 600; color: var(--gold); }
+  .ct-msg-actions { margin-left: auto; display: flex; gap: 2px; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; align-self: center; }
+  .ct-act-btn {
+    background: var(--bg4); border: 1px solid var(--border); border-radius: 5px;
+    padding: 3px 7px; font-size: 12px; cursor: pointer; color: var(--text2);
+    font-family: 'Inter', sans-serif; transition: all 0.1s;
+  }
+  .ct-act-btn:hover { background: var(--bg2); color: var(--text); border-color: var(--border2); }
+
+  /* Reply bar */
+  #chat-tab-reply-bar {
+    display: none; align-items: center; gap: 8px;
+    padding: 7px 16px; background: var(--bg3); border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text2); flex-shrink: 0;
+  }
+  #chat-tab-reply-bar.visible { display: flex; }
+  .ct-reply-icon   { color: var(--gold); font-size: 13px; flex-shrink: 0; }
+  .ct-reply-text   { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ct-reply-author2 { font-weight: 600; color: var(--gold); }
+
+  /* Input area */
+  #chat-tab-input-area {
+    padding: 10px 14px; border-top: 1px solid var(--border);
+    display: flex; gap: 8px; align-items: center; flex-shrink: 0;
+  }
+  #chat-tab-input {
+    flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 9px 12px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--text);
+    transition: border-color 0.15s; resize: none; line-height: 1.4; max-height: 120px;
+  }
+  #chat-tab-input:focus { outline: none; border-color: var(--gold-dark); }
+  #chat-tab-input:disabled { opacity: 0.5; }
+  #chat-tab-send {
+    background: rgba(212,160,23,0.2); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 9px 16px; font-size: 13px; color: var(--gold);
+    cursor: pointer; font-weight: 500; font-family: 'Inter', sans-serif;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  #chat-tab-send:hover:not(:disabled) { background: rgba(212,160,23,0.35); }
+  #chat-tab-send:disabled { opacity: 0.4; cursor: default; }
+
+  /* Picker */
+  #chat-tab-picker {
+    position: absolute; bottom: 62px; right: 14px;
+    background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px;
+    width: 340px; max-height: 360px; z-index: 500;
+    display: none; flex-direction: column; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  #chat-tab-picker.open { display: flex; }
+  .ct-picker-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .ct-picker-tab {
+    flex: 1; padding: 8px; font-size: 18px; background: none; border: none;
+    cursor: pointer; transition: background 0.1s; border-bottom: 2px solid transparent;
+  }
+  .ct-picker-tab:hover { background: var(--bg3); }
+  .ct-picker-tab.active { border-bottom-color: var(--gold); background: var(--bg3); }
+  #ct-picker-search {
+    padding: 8px 10px; background: var(--bg3); border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  #ct-picker-search input {
+    width: 100%; background: var(--bg4); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 9px; font-size: 12px;
+    color: var(--text); font-family: 'Inter', sans-serif;
+  }
+  #ct-picker-search input:focus { outline: none; border-color: var(--gold-dark); }
+  #ct-picker-body { overflow-y: auto; flex: 1; padding: 8px; }
+  .ct-picker-lbl { font-size: 10px; font-weight: 700; color: var(--text3);
+                   text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 2px 6px; }
+  .ct-emoji-grid { display: flex; flex-wrap: wrap; gap: 2px; }
+  .ct-emoji-btn {
+    font-size: 22px; background: none; border: none; cursor: pointer;
+    padding: 4px; border-radius: 6px; line-height: 1; transition: background 0.1s;
+  }
+  .ct-emoji-btn:hover { background: var(--bg3); }
+  .ct-sticker-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+  .ct-sticker-btn {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px; cursor: pointer; font-size: 26px; text-align: center;
+    transition: all 0.1s; line-height: 1.4;
+  }
+  .ct-sticker-btn:hover { background: var(--bg4); border-color: var(--border2); transform: scale(1.08); }
+  .ct-gif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .ct-gif-btn {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; cursor: pointer; padding: 0; font-size: 0; display: block;
+    transition: all 0.1s;
+  }
+  .ct-gif-btn:hover { border-color: var(--border2); transform: scale(1.02); }
+  .ct-gif-btn img { width: 100%; height: 80px; object-fit: cover; display: block; }
+  .ct-gif-btn .ct-gif-label { font-size: 10px; color: var(--text2); padding: 3px 6px; text-align: center; font-family: 'Inter', sans-serif; display: block; }
 </style>
 </head>
 <body>
@@ -948,7 +1125,7 @@
     <button class="nav-btn" id="nav-clans" onclick="showPage('clans',this)" data-key="nav_clans">Committed Clans</button>
     <button class="nav-btn" id="nav-action" onclick="showPage('action',this)" data-key="nav_action">Action Plan</button>
     <button class="nav-btn" id="nav-election" onclick="showPage('election',this)" data-key="nav_election">Election</button>
-    <button class="nav-btn" onclick="openChat()" data-key="nav_chat">Chat</button>
+    <button class="nav-btn" id="nav-chat" onclick="showPage('chat',this)" data-key="nav_chat">Chat</button>
     <button class="nav-btn" id="nav-admin" onclick="showPage('admin',this)" style="display:none" data-key="nav_admin">Admin</button>
   </div>
   <!-- Controls: user chip + [lang above hamburger] -->
@@ -986,7 +1163,7 @@
   <button class="nav-btn" id="mob-nav-clans" onclick="showPageMobile('clans')" data-key="nav_clans">Committed Clans</button>
   <button class="nav-btn" id="mob-nav-action" onclick="showPageMobile('action')" data-key="nav_action">Action Plan</button>
   <button class="nav-btn" id="mob-nav-election" onclick="showPageMobile('election')" data-key="nav_election">Election</button>
-  <button class="nav-btn" onclick="openChat()" data-key="nav_chat">Chat</button>
+  <button class="nav-btn" id="mob-nav-chat" onclick="showPageMobile('chat')" data-key="nav_chat">Chat</button>
   <button class="nav-btn" id="mob-nav-admin" onclick="showPageMobile('admin')" style="display:none" data-key="nav_admin">Admin</button>
 </div>
 
@@ -1330,6 +1507,84 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ CHAT ══ -->
+<div id="page-chat" class="page">
+  <div id="chat-layout">
+
+    <!-- Sidebar -->
+    <div id="chat-sidebar">
+      <div class="sb-hdr">Channels</div>
+      <button class="sc-btn active" id="sc-btn-info" onclick="ctSwitchCh('1492982005741129919','#info','info','#378ADD',this)">
+        <div class="sc-dot" style="background:#378ADD"></div><span class="cl">#info</span>
+      </button>
+      <button class="sc-btn" id="sc-btn-announcements" onclick="ctSwitchCh('1493954042605469797','#announcements','announcements','#e67e22',this)">
+        <div class="sc-dot" style="background:#e67e22"></div><span class="cl">#announcements</span>
+      </button>
+      <button class="sc-btn" id="sc-btn-chat" onclick="ctSwitchCh('1492982005741129920','#chat','chat','#2ecc71',this)">
+        <div class="sc-dot" style="background:#2ecc71"></div><span class="cl">#chat</span>
+      </button>
+      <button class="sc-btn" id="sc-btn-for-developers" onclick="ctSwitchCh('1492982005741129921','#for-developers','for-developers','#9b59b6',this)">
+        <div class="sc-dot" style="background:#9b59b6"></div><span class="cl">#for-developers</span>
+      </button>
+    </div>
+
+    <!-- Chat area -->
+    <div id="chat-main">
+      <div id="chat-tab-hdr">
+        <div id="chat-tab-hdr-dot" style="background:#378ADD"></div>
+        <div>
+          <div id="chat-tab-hdr-name">#info</div>
+          <div id="chat-tab-hdr-sub">Info &amp; updates channel</div>
+        </div>
+        <div id="chat-tab-conn-badge">● LIVE</div>
+      </div>
+
+      <div id="chat-tab-status-bar">
+        <div id="chat-tab-status-dot" style="background:#2ecc71"></div>
+        <span id="chat-tab-status-text">Connecting…</span>
+        <span style="margin-left:auto;color:var(--text3)" id="chat-tab-last-updated"></span>
+      </div>
+
+      <div id="chat-tab-messages">
+        <div id="chat-tab-welcome" style="text-align:center;color:var(--text3);font-size:13px;padding:4rem 0">
+          ⏳ Loading messages…
+        </div>
+      </div>
+
+      <div id="chat-tab-reply-bar">
+        <span class="ct-reply-icon">↩</span>
+        <span class="ct-reply-text">Replying to <span class="ct-reply-author2" id="ct-reply-author"></span>: <span id="ct-reply-preview"></span></span>
+        <button style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:2px;font-family:'Inter',sans-serif;transition:color 0.1s" onclick="ctCancelReply()" title="Cancel">✕</button>
+      </div>
+
+      <!-- Emoji/Sticker/GIF picker -->
+      <div id="chat-tab-picker">
+        <div class="ct-picker-tabs">
+          <button class="ct-picker-tab active" id="ct-tab-emoji" onclick="ctSwitchPickerTab('emoji')" title="Emoji">😊</button>
+          <button class="ct-picker-tab" id="ct-tab-sticker" onclick="ctSwitchPickerTab('sticker')" title="Stickers">🎭</button>
+          <button class="ct-picker-tab" id="ct-tab-gif" onclick="ctSwitchPickerTab('gif')">GIF</button>
+        </div>
+        <div id="ct-picker-search">
+          <input id="ct-picker-search-input" placeholder="Search…" oninput="ctRenderPicker()">
+        </div>
+        <div id="ct-picker-body"></div>
+      </div>
+
+      <div id="chat-tab-input-area">
+        <button id="ct-picker-toggle" onclick="ctTogglePicker()" title="Emoji / Stickers / GIFs"
+          style="background:none;border:none;cursor:pointer;font-size:18px;line-height:1;padding:4px;border-radius:6px;transition:background 0.1s;color:var(--text2)">😊</button>
+        <textarea id="chat-tab-input" rows="1"
+          placeholder="Log in to send messages…"
+          onkeydown="ctOnKeydown(event)"
+          oninput="ctAutoResize(this)"
+          disabled></textarea>
+        <button id="chat-tab-send" onclick="ctSendMsg()" disabled>Send</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2121,15 +2376,6 @@ document.addEventListener('click', e => {
 });
 
 // ── Navigation ────────────────────────────────────────────────────────────
-function openChat() {
-  const token = _rawPortalToken;
-  if (token) {
-    window.location.href = 'chat.html?token=' + encodeURIComponent(token);
-  } else {
-    window.location.href = 'chat.html';
-  }
-}
-
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -3060,6 +3306,350 @@ document.addEventListener('click', e => {
     if (p) p.style.display = 'none';
   }
 });
+
+// ══════════════════════════════════════════════════════════════
+// EMBEDDED CHAT TAB — all functions prefixed ct* to avoid clashes
+// Shares SESSION, _firestoreDb, FIREBASE_CONFIG from above
+// ══════════════════════════════════════════════════════════════
+const CT_CHANNELS = {
+  '1492982005741129919': { name: '#info',           sub: 'Info & updates channel',    dot: '#378ADD', type: 'info'          },
+  '1493954042605469797': { name: '#announcements',  sub: 'Server announcements',      dot: '#e67e22', type: 'announcements'  },
+  '1492982005741129920': { name: '#chat',           sub: 'General community chat',    dot: '#2ecc71', type: 'chat'           },
+  '1492982005741129921': { name: '#for-developers', sub: 'Messages to the developers',dot: '#9b59b6', type: 'for-developers' },
+};
+
+let _ctActiveChanId   = '1492982005741129919';
+let _ctActiveChanType = 'info';
+let _ctKnownMsgIds    = new Set();
+let _ctUnsub          = null;
+let _ctPollTimer      = null;
+let _ctReplyTo        = null;
+let _ctPickerMode     = 'emoji';
+let _ctPickerOpen     = false;
+let _ctChatInited     = false;
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function _ctEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function _ctFmtTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString([],{month:'short',day:'numeric'}) + ' ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function _ctInitials(n) { return (n||'').split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'??'; }
+const _CT_COLORS = ['#E24B4A','#378ADD','#639922','#EF9F27','#D85A30','#D4537E','#7B68EE','#20B2AA'];
+function _ctNameColor(n) { let h=0; for(let i=0;i<(n||'').length;i++) h=(h*31+n.charCodeAt(i))|0; return _CT_COLORS[Math.abs(h)%_CT_COLORS.length]; }
+
+// ── Render message ─────────────────────────────────────────────────────────
+function _ctRenderMsg(m, container, scroll) {
+  if (_ctKnownMsgIds.has(m.id)) return;
+  _ctKnownMsgIds.add(m.id);
+  const color = _ctNameColor(m.author);
+  const inits  = _ctInitials(m.author);
+  const avatarHtml = m.avatar
+    ? `<img src="${_ctEsc(m.avatar)}" class="ct-avatar" style="object-fit:cover;border-radius:50%" onerror="this.outerHTML='<div class=\\'ct-avatar\\' style=\\'background:${color};color:#fff\\'>${inits}</div>'">`
+    : `<div class="ct-avatar" style="background:${color};color:#fff">${inits}</div>`;
+  let badge = '';
+  if (m.source==='portal') badge=`<span class="ct-badge portal">${m.platform==='telegram'?'✈ tg':'🌐 portal'}</span>`;
+  else if (m.is_webhook)   badge=`<span class="ct-badge">bridge</span>`;
+  let replyHtml = '';
+  if (m.reply_to) replyHtml=`<div class="ct-reply-quote"><span class="ct-reply-author">${_ctEsc(m.reply_to.author)}</span><span style="margin-left:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">${_ctEsc((m.reply_to.content||'').slice(0,80))}</span></div>`;
+  let bodyHtml = replyHtml;
+  if (m.content) bodyHtml += `<div class="ct-text">${_ctEsc(m.content)}</div>`;
+  for (const att of (m.attachments||[])) {
+    if (att.is_gif)     bodyHtml += `<img src="${_ctEsc(att.url)}" class="ct-gif" loading="lazy">`;
+    else if (att.is_image) bodyHtml += `<img src="${_ctEsc(att.url)}" class="ct-img" loading="lazy">`;
+    else if (att.is_sticker) bodyHtml += `<span style="font-size:48px;display:block;margin-top:4px">${_ctEsc(att.emoji)}</span>`;
+    else if (att.url)   bodyHtml += `<a href="${_ctEsc(att.url)}" target="_blank" class="ct-file">📎 ${_ctEsc(att.filename||'file')}</a>`;
+  }
+  const sid = (m.id||'').replace(/'/g,"\\'");
+  const sau = (m.author||'').replace(/'/g,"\\'");
+  const sco = (m.content||'').slice(0,80).replace(/'/g,"\\'");
+  const div = document.createElement('div');
+  div.className = 'ct-msg' + (_ctActiveChanType==='announcements' ? ' ct-announce' : '');
+  div.dataset.id = m.id;
+  div.innerHTML = `
+    ${avatarHtml}
+    <div class="ct-body">
+      <div class="ct-hdr">
+        <span class="ct-author" style="color:${color}">${_ctEsc(m.author)}</span>
+        ${badge}
+        <span class="ct-time">${_ctFmtTime(m.timestamp)}</span>
+      </div>
+      ${bodyHtml}
+    </div>
+    <div class="ct-msg-actions">
+      <button class="ct-act-btn" onclick="ctStartReply('${sid}','${sau}','${sco}')">↩</button>
+    </div>`;
+  container.appendChild(div);
+  if (scroll) container.scrollTop = container.scrollHeight;
+}
+
+// ── Status bar ─────────────────────────────────────────────────────────────
+function _ctSetStatus(live) {
+  const bar  = document.getElementById('chat-tab-status-bar');
+  const dot  = document.getElementById('chat-tab-status-dot');
+  const txt  = document.getElementById('chat-tab-status-text');
+  const bdg  = document.getElementById('chat-tab-conn-badge');
+  if (bar) bar.style.display = 'flex';
+  if (dot) dot.style.background = live ? '#2ecc71' : '#e67e22';
+  if (txt) txt.textContent = live ? 'Live — messages sync in real time' : 'Polling every 10 s';
+  if (bdg) bdg.style.display = live ? '' : 'none';
+  const upd = document.getElementById('chat-tab-last-updated');
+  if (upd) upd.textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+// ── Subscribe ──────────────────────────────────────────────────────────────
+function _ctSubscribe(channelId) {
+  if (_ctUnsub)    { _ctUnsub(); _ctUnsub = null; }
+  if (_ctPollTimer){ clearInterval(_ctPollTimer); _ctPollTimer = null; }
+  if (!_firestoreDb || !channelId) return;
+  const { collection, query, orderBy, limit, onSnapshot } = window.firebaseFirestore;
+  const q = query(collection(_firestoreDb,'messages',channelId,'msgs'), orderBy('timestamp','desc'), limit(200));
+  let first = true;
+  _ctUnsub = onSnapshot(q, snap => {
+    const container = document.getElementById('chat-tab-messages');
+    if (!container) return;
+    const welcome = document.getElementById('chat-tab-welcome');
+    if (welcome) welcome.remove();
+    if (first) {
+      [...snap.docs].reverse().forEach(d => _ctRenderMsg(d.data(), container, false));
+      container.scrollTop = container.scrollHeight;
+      first = false;
+      _ctSetStatus(true);
+    } else {
+      snap.docChanges().forEach(ch => { if (ch.type==='added') _ctRenderMsg(ch.doc.data(), container, true); });
+      _ctSetStatus(true);
+    }
+  }, () => {
+    _ctSetStatus(false);
+    _ctPollTimer = setInterval(() => _ctPoll(channelId), 10000);
+  });
+}
+
+async function _ctPoll(channelId) {
+  if (!_firestoreDb || !channelId) return;
+  const { collection, query, orderBy, limit, getDocs } = window.firebaseFirestore;
+  const snap = await getDocs(query(collection(_firestoreDb,'messages',channelId,'msgs'), orderBy('timestamp','desc'), limit(200)));
+  const container = document.getElementById('chat-tab-messages');
+  if (!container) return;
+  const welcome = document.getElementById('chat-tab-welcome');
+  if (welcome) welcome.remove();
+  [...snap.docs].reverse().forEach(d => _ctRenderMsg(d.data(), container, false));
+  container.scrollTop = container.scrollHeight;
+  _ctSetStatus(false);
+}
+
+// ── Switch channel ─────────────────────────────────────────────────────────
+function ctSwitchCh(channelId, name, type, color, btn) {
+  document.querySelectorAll('.sc-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  _ctActiveChanId   = channelId;
+  _ctActiveChanType = type;
+  _ctKnownMsgIds    = new Set();
+  ctCancelReply();
+  const ch = CT_CHANNELS[channelId] || {};
+  document.getElementById('chat-tab-hdr-dot').style.background = ch.dot || color;
+  document.getElementById('chat-tab-hdr-name').textContent = ch.name || name;
+  document.getElementById('chat-tab-hdr-sub').textContent  = ch.sub  || '';
+  if (SESSION) _ctEnableInput();
+  const msgs = document.getElementById('chat-tab-messages');
+  msgs.innerHTML = `<div id="chat-tab-welcome" style="text-align:center;color:var(--text3);font-size:13px;padding:4rem 0">⏳ Loading messages…</div>`;
+  if (channelId && _firestoreDb) _ctSubscribe(channelId);
+}
+
+// ── Init chat on first tab open ────────────────────────────────────────────
+async function _ctInit() {
+  if (_ctChatInited) return;
+  _ctChatInited = true;
+  // Wait for Firebase (may already be ready from portal init)
+  await new Promise(resolve => {
+    if (_firestoreDb) return resolve();
+    let w = 0;
+    const iv = setInterval(() => { w+=50; if (_firestoreDb || w>6000) { clearInterval(iv); resolve(); } }, 50);
+  });
+  _ctSubscribe(_ctActiveChanId);
+}
+
+// Hook into showPage / showPageMobile to init on first visit
+const _ctOrigShowPage = window.showPage;
+window.showPage = function(id, btn) {
+  _ctOrigShowPage(id, btn);
+  if (id === 'chat') _ctInit();
+};
+const _ctOrigShowPageMobile = window.showPageMobile;
+window.showPageMobile = function(id) {
+  _ctOrigShowPageMobile(id);
+  if (id === 'chat') _ctInit();
+};
+
+// Also enable/disable input when session starts/ends
+const _ctOrigStartSession = window._startSession || null;
+// We patch _startSession after it's defined (it's a regular function, not a closure)
+// Instead, override ctEnableInput logic from _startSession by watching SESSION
+// We hook into the existing signOut to also disable chat input
+const _ctOrigSignOut = window.signOut;
+window.signOut = function() {
+  if (typeof _ctOrigSignOut === 'function') _ctOrigSignOut();
+  _ctDisableInput();
+};
+
+// ── Input helpers ──────────────────────────────────────────────────────────
+function _ctEnableInput() {
+  const inp = document.getElementById('chat-tab-input');
+  const btn = document.getElementById('chat-tab-send');
+  if (!inp) return;
+  inp.disabled = false;
+  inp.placeholder = 'Message ' + (CT_CHANNELS[_ctActiveChanId]?.name || '#channel') + '…';
+  if (btn) btn.disabled = false;
+}
+function _ctDisableInput() {
+  const inp = document.getElementById('chat-tab-input');
+  const btn = document.getElementById('chat-tab-send');
+  if (!inp) return;
+  inp.disabled = true;
+  inp.placeholder = 'Log in to send messages…';
+  if (btn) btn.disabled = true;
+}
+
+// ── Reply ──────────────────────────────────────────────────────────────────
+function ctStartReply(msgId, author, content) {
+  _ctReplyTo = { id: msgId, author, content };
+  document.getElementById('ct-reply-author').textContent  = author;
+  document.getElementById('ct-reply-preview').textContent = content.slice(0,60) + (content.length>60?'…':'');
+  document.getElementById('chat-tab-reply-bar').classList.add('visible');
+  document.getElementById('chat-tab-input').focus();
+}
+function ctCancelReply() {
+  _ctReplyTo = null;
+  const bar = document.getElementById('chat-tab-reply-bar');
+  if (bar) bar.classList.remove('visible');
+}
+
+// ── Send ───────────────────────────────────────────────────────────────────
+async function ctSendMsg(overrideContent, overrideAttachments) {
+  if (!SESSION || !_ctActiveChanId || !_firestoreDb) return;
+  const inp = document.getElementById('chat-tab-input');
+  const content = overrideContent !== undefined ? overrideContent : (inp.value||'').trim();
+  const attachments = overrideAttachments || [];
+  if (!content && !attachments.length) return;
+  if (overrideContent === undefined) { inp.value=''; ctAutoResize(inp); }
+  const { collection, addDoc } = window.firebaseFirestore;
+  const defaultAvatar = `https://cdn.discordapp.com/embed/avatars/${Number(BigInt(SESSION.uid)%5n)}.png`;
+  const avatar = SESSION.platform==='discord' ? defaultAvatar : 'https://telegram.org/img/t_logo.png';
+  const msgDoc = {
+    id: `portal_${SESSION.uid}_${Date.now()}`,
+    author: SESSION.uname, avatar,
+    content, attachments,
+    timestamp: new Date().toISOString(),
+    is_webhook: false, is_bot: false,
+    source: 'portal', _forwarded: false,
+    platform: SESSION.platform, sender_uid: SESSION.uid,
+    channel_id: _ctActiveChanId,
+    ...(_ctReplyTo ? { reply_to: _ctReplyTo } : {})
+  };
+  ctCancelReply();
+  try {
+    await addDoc(collection(_firestoreDb,'portal_outbox'), { ...msgDoc });
+    await addDoc(collection(_firestoreDb,'messages',_ctActiveChanId,'msgs'), { ...msgDoc, _forwarded: true });
+  } catch(e) {
+    console.error('Chat send failed:', e);
+    if (overrideContent === undefined) inp.value = content;
+  }
+}
+function ctOnKeydown(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); ctSendMsg(); } }
+function ctAutoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+
+// ── Picker ─────────────────────────────────────────────────────────────────
+const CT_EMOJI = {
+  'Smileys':['😀','😂','😍','🥰','😎','😭','😤','🤔','😏','🥳','😴','🤯','😈','🎉','❤️','🔥','👍','👏','🙌','💪','🤝','🫡','💀','👀','💯','🚀','⚔️','🛡️','⭐','💎'],
+  'Gaming': ['🎮','🕹️','🏆','🥇','🎯','⚡','🌟','💥','🗡️','🏹','🧙','🐉','👑','🌍','🔮','🎲','🃏','🎖️','⚙️','🔧'],
+  'Nature': ['🌸','🌊','🌙','☀️','⛅','🌈','❄️','🍀','🌿','🦁','🐯','🦊','🐺','🦅','🐍','🌺','🍁','🌾','⛰️','🌋'],
+};
+const CT_STICKERS = [
+  {emoji:'⚔️🔥',label:'Battle Cry'},{emoji:'🛡️💪',label:'Defend'},{emoji:'👑🌟',label:'Victory'},
+  {emoji:'💀☠️',label:'GG'},{emoji:'🚀⚡',label:'Speed'},{emoji:'🐉🔥',label:'Dragon'},
+  {emoji:'🤝💎',label:'Alliance'},{emoji:'😤⚡',label:'Rage'},{emoji:'🎯✨',label:'Perfect'},
+  {emoji:'🥳🎉',label:'Party'},{emoji:'🏆🌟',label:'Champion'},{emoji:'🔮💥',label:'Magic'},
+  {emoji:'🦁🦁',label:'Pride'},{emoji:'🙌💯',label:'Respect'},{emoji:'😂🤣',label:'LOL'},{emoji:'❤️🔥',label:'Love'},
+];
+const CT_GIFS = [
+  {label:'GG',url:'https://media.tenor.com/tEBSAONMYT8AAAAC/gg-good-game.gif'},
+  {label:'Victory',url:'https://media.tenor.com/YqeKyQ7U4CAAAAAC/victory-winner.gif'},
+  {label:'Rage',url:'https://media.tenor.com/IjKlKLBqeRUAAAAC/rage-angry.gif'},
+  {label:"Let's Go",url:'https://media.tenor.com/yd7T0j5iOGwAAAAC/lets-go-excited.gif'},
+  {label:'Clap',url:'https://media.tenor.com/bNgNJE8WNPAAAAAC/clap-clapping.gif'},
+  {label:'Nooo',url:'https://media.tenor.com/oHFLVCMDpIAAAAAC/nooo-no.gif'},
+  {label:'POG',url:'https://media.tenor.com/HZDDVOsBCokAAAAC/pog-champion.gif'},
+  {label:'PepeLaugh',url:'https://media.tenor.com/OJJCmcWf2DIAAAAC/pepe-laugh.gif'},
+];
+function ctRenderPicker() {
+  const body = document.getElementById('ct-picker-body');
+  const q = (document.getElementById('ct-picker-search-input').value||'').trim().toLowerCase();
+  if (_ctPickerMode==='emoji') {
+    let html='';
+    for (const [cat,emojis] of Object.entries(CT_EMOJI)) {
+      const f = q ? emojis.filter(e=>e.includes(q)) : emojis;
+      if (!f.length) continue;
+      html+=`<div class="ct-picker-lbl">${cat}</div><div class="ct-emoji-grid">`;
+      f.forEach(e=>{ html+=`<button class="ct-emoji-btn" onclick="ctInsertEmoji('${e}')" title="${e}">${e}</button>`; });
+      html+='</div>';
+    }
+    body.innerHTML = html || '<div style="text-align:center;color:var(--text3);padding:20px;font-size:13px">No emoji found</div>';
+  } else if (_ctPickerMode==='sticker') {
+    const items = q ? CT_STICKERS.filter(s=>s.label.toLowerCase().includes(q)) : CT_STICKERS;
+    let html='<div class="ct-sticker-grid">';
+    items.forEach(s=>{ html+=`<button class="ct-sticker-btn" onclick="ctSendSticker('${s.emoji}','${s.label}')" title="${s.label}"><div>${s.emoji}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${s.label}</div></button>`; });
+    body.innerHTML = html+'</div>';
+  } else {
+    let html='<div class="ct-gif-grid">';
+    CT_GIFS.forEach(g=>{ html+=`<button class="ct-gif-btn" onclick="ctSendGif('${_ctEsc(g.url)}','${_ctEsc(g.label)}')" title="${g.label}"><img src="${_ctEsc(g.url)}" alt="${_ctEsc(g.label)}" loading="lazy"><span class="ct-gif-label">${_ctEsc(g.label)}</span></button>`; });
+    body.innerHTML = html+'</div>';
+  }
+}
+function ctTogglePicker() {
+  _ctPickerOpen = !_ctPickerOpen;
+  const p = document.getElementById('chat-tab-picker');
+  if (_ctPickerOpen) { p.classList.add('open'); document.getElementById('ct-picker-search-input').value=''; ctRenderPicker(); }
+  else p.classList.remove('open');
+}
+function ctSwitchPickerTab(mode) {
+  _ctPickerMode = mode;
+  document.querySelectorAll('.ct-picker-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ct-tab-'+mode).classList.add('active');
+  document.getElementById('ct-picker-search').style.display = mode==='gif'?'none':'';
+  ctRenderPicker();
+}
+function ctInsertEmoji(emoji) {
+  const inp = document.getElementById('chat-tab-input');
+  const pos = inp.selectionStart;
+  inp.value = inp.value.slice(0,pos)+emoji+inp.value.slice(inp.selectionEnd);
+  inp.selectionStart = inp.selectionEnd = pos+emoji.length;
+  inp.focus(); ctAutoResize(inp); ctTogglePicker();
+}
+function ctSendSticker(emoji, label) {
+  ctTogglePicker();
+  if (!SESSION||!_ctActiveChanId||!_firestoreDb) return;
+  ctSendMsg('',[{is_sticker:true,emoji,label,url:'',filename:label}]);
+}
+function ctSendGif(url, label) {
+  ctTogglePicker();
+  if (!SESSION||!_ctActiveChanId||!_firestoreDb) return;
+  ctSendMsg('',[{is_gif:true,is_image:false,url,filename:label}]);
+}
+document.addEventListener('click', e => {
+  if (_ctPickerOpen && !e.target.closest('#chat-tab-picker') && !e.target.closest('#ct-picker-toggle')) {
+    _ctPickerOpen = false;
+    const p = document.getElementById('chat-tab-picker');
+    if (p) p.classList.remove('open');
+  }
+});
+
+// Enable input whenever _startSession is called (patch at call-site via SESSION watcher)
+// We override _startSession directly since it's defined above in this same script
+const _ctOrigStartSession2 = _startSession;
+window._startSession = _startSession = function(payload, rawToken) {
+  _ctOrigStartSession2(payload, rawToken);
+  _ctEnableInput();
+};
 
 </script>
 </body>
