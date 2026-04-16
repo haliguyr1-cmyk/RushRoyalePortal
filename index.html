@@ -948,7 +948,7 @@
     <button class="nav-btn" id="nav-clans" onclick="showPage('clans',this)" data-key="nav_clans">Committed Clans</button>
     <button class="nav-btn" id="nav-action" onclick="showPage('action',this)" data-key="nav_action">Action Plan</button>
     <button class="nav-btn" id="nav-election" onclick="showPage('election',this)" data-key="nav_election">Election</button>
-    <a class="nav-btn" href="chat.html" data-key="nav_chat">Chat</a>
+    <button class="nav-btn" onclick="openChat()" data-key="nav_chat">Chat</button>
     <button class="nav-btn" id="nav-admin" onclick="showPage('admin',this)" style="display:none" data-key="nav_admin">Admin</button>
   </div>
   <!-- Controls: user chip + [lang above hamburger] -->
@@ -986,7 +986,7 @@
   <button class="nav-btn" id="mob-nav-clans" onclick="showPageMobile('clans')" data-key="nav_clans">Committed Clans</button>
   <button class="nav-btn" id="mob-nav-action" onclick="showPageMobile('action')" data-key="nav_action">Action Plan</button>
   <button class="nav-btn" id="mob-nav-election" onclick="showPageMobile('election')" data-key="nav_election">Election</button>
-  <a class="nav-btn" href="chat.html" data-key="nav_chat">Chat</a>
+  <button class="nav-btn" onclick="openChat()" data-key="nav_chat">Chat</button>
   <button class="nav-btn" id="mob-nav-admin" onclick="showPageMobile('admin')" style="display:none" data-key="nav_admin">Admin</button>
 </div>
 
@@ -2121,6 +2121,15 @@ document.addEventListener('click', e => {
 });
 
 // ── Navigation ────────────────────────────────────────────────────────────
+function openChat() {
+  const token = _rawPortalToken;
+  if (token) {
+    window.location.href = 'chat.html?token=' + encodeURIComponent(token);
+  } else {
+    window.location.href = 'chat.html';
+  }
+}
+
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
