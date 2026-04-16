@@ -948,7 +948,7 @@
     <button class="nav-btn" id="nav-clans" onclick="showPage('clans',this)" data-key="nav_clans">Committed Clans</button>
     <button class="nav-btn" id="nav-action" onclick="showPage('action',this)" data-key="nav_action">Action Plan</button>
     <button class="nav-btn" id="nav-election" onclick="showPage('election',this)" data-key="nav_election">Election</button>
-    <button class="nav-btn" id="nav-chat" onclick="showPage('chat',this)" data-key="nav_chat">Chat</button>
+    <a class="nav-btn" href="chat.html" data-key="nav_chat">Chat</a>
     <button class="nav-btn" id="nav-admin" onclick="showPage('admin',this)" style="display:none" data-key="nav_admin">Admin</button>
   </div>
   <!-- Controls: user chip + [lang above hamburger] -->
@@ -986,7 +986,7 @@
   <button class="nav-btn" id="mob-nav-clans" onclick="showPageMobile('clans')" data-key="nav_clans">Committed Clans</button>
   <button class="nav-btn" id="mob-nav-action" onclick="showPageMobile('action')" data-key="nav_action">Action Plan</button>
   <button class="nav-btn" id="mob-nav-election" onclick="showPageMobile('election')" data-key="nav_election">Election</button>
-  <button class="nav-btn" id="mob-nav-chat" onclick="showPageMobile('chat')" data-key="nav_chat">Chat</button>
+  <a class="nav-btn" href="chat.html" data-key="nav_chat">Chat</a>
   <button class="nav-btn" id="mob-nav-admin" onclick="showPageMobile('admin')" style="display:none" data-key="nav_admin">Admin</button>
 </div>
 
@@ -1328,82 +1328,6 @@
             <div class="activity-text" data-key="rule4">Representatives serve until the next scheduled election.</div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ CHAT ══ -->
-<div id="page-chat" class="page">
-  <div class="page-title" data-key="chat_title">Channel Chat</div>
-
-  <div class="chat-layout" style="height:560px">
-    <!-- Sidebar: channels -->
-    <div class="channel-list">
-      <div class="channel-list-hdr" data-key="channels_hdr">Channels</div>
-      <div class="channel-scroll" id="channel-scroll">
-        <button class="ch-btn active" id="ch-btn-info" onclick="switchCh('1492982005741129919','#info','info','#378ADD',this)">
-          <div class="lang-dot" style="background:#378ADD"></div>#info
-        </button>
-        <button class="ch-btn" id="ch-btn-announcements" onclick="switchCh('1493954042605469797','#announcements','announcements','#e67e22',this)">
-          <div class="lang-dot" style="background:#e67e22"></div>#announcements
-        </button>
-      </div>
-    </div>
-
-    <!-- Chat area -->
-    <div class="chat-panel" style="position:relative;display:flex;flex-direction:column;overflow:hidden">
-      <div class="chat-hdr">
-        <div class="lang-dot" id="chat-dot" style="background:#378ADD;width:10px;height:10px;border-radius:50%;flex-shrink:0"></div>
-        <div style="flex:1">
-          <div class="chat-hdr-name" id="chat-ch-name">#international-chat</div>
-          <div class="chat-hdr-sub" id="chat-ch-sub">Select a channel</div>
-        </div>
-        <div id="chat-conn-badge" style="display:none;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(39,174,96,0.1);color:#2ecc71;border:1px solid rgba(39,174,96,0.2)">● LIVE</div>
-      </div>
-
-      <!-- Status bar -->
-      <div id="chat-status-bar" style="display:none;align-items:center;gap:8px;padding:5px 16px;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);background:var(--bg3);flex-shrink:0">
-        <div id="chat-live-dot" style="width:6px;height:6px;border-radius:50%;background:#2ecc71;flex-shrink:0"></div>
-        <span id="chat-status-text">Connected — messages sync in real time</span>
-        <span style="margin-left:auto;color:var(--text3)" id="chat-last-updated"></span>
-      </div>
-
-      <!-- Messages -->
-      <div class="chat-messages" id="chat-messages" style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:2px">
-        <div style="text-align:center;color:var(--text3);font-size:13px;padding:3rem 0" id="chat-welcome">Select a channel to begin</div>
-      </div>
-
-      <!-- Reply bar -->
-      <div id="reply-bar" style="display:none;align-items:center;gap:8px;padding:7px 16px;background:var(--bg3);border-top:1px solid var(--border);font-size:12px;color:var(--text2);flex-shrink:0">
-        <span style="color:var(--gold);font-size:13px">↩</span>
-        <span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Replying to <strong id="reply-author" style="color:var(--gold)"></strong>: <span id="reply-preview"></span></span>
-        <button onclick="cancelReply()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;line-height:1;padding:2px;font-family:'Inter',sans-serif" title="Cancel reply">✕</button>
-      </div>
-
-      <!-- Picker panel -->
-      <div id="picker-panel" style="position:absolute;bottom:58px;right:14px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;width:340px;max-height:360px;z-index:500;display:none;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5)">
-        <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0">
-          <button id="ptab-emoji" onclick="switchPickerTab('emoji')" style="flex:1;padding:8px;font-size:18px;background:var(--bg3);border:none;border-bottom:2px solid var(--gold);cursor:pointer">😊</button>
-          <button id="ptab-sticker" onclick="switchPickerTab('sticker')" style="flex:1;padding:8px;font-size:18px;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer" title="Stickers">🎭</button>
-          <button id="ptab-gif" onclick="switchPickerTab('gif')" style="flex:1;padding:8px;font-size:13px;font-weight:700;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer">GIF</button>
-        </div>
-        <div id="picker-search-wrap" style="padding:8px 10px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0">
-          <input id="picker-search-input" placeholder="Search…" oninput="renderPicker()" style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif">
-        </div>
-        <div id="picker-body" style="overflow-y:auto;flex:1;padding:8px"></div>
-      </div>
-
-      <!-- Input area -->
-      <div class="chat-input-area" style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0">
-        <button id="picker-toggle-btn" onclick="togglePicker()" title="Emoji / Stickers / GIFs" style="background:none;border:none;cursor:pointer;font-size:18px;line-height:1;padding:4px;border-radius:6px;transition:background 0.1s;color:var(--text2)">😊</button>
-        <textarea class="chat-input" id="chat-input" rows="1"
-          placeholder="Select a channel..."
-          onkeydown="onChatInputKeydown(event)"
-          oninput="autoResizeChatInput(this)"
-          disabled
-          style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);resize:none;line-height:1.4;max-height:120px;transition:border-color 0.15s"></textarea>
-        <button class="chat-send" id="chat-send-btn" onclick="sendMsg()" data-key="send_btn" disabled>Send</button>
       </div>
     </div>
   </div>
@@ -2169,11 +2093,6 @@ function showPageMobile(id) {
   // Close drawer
   document.getElementById('mobile-nav').classList.remove('open');
   document.getElementById('hamburger-btn').classList.remove('open');
-  // Auto-load #info channel when chat tab first opened
-  if (id === 'chat' && !_activeChanId && _firestoreDb) {
-    const infoBtn = document.getElementById('ch-btn-info');
-    switchCh('1492982005741129919', '#info', 'info', '#378ADD', infoBtn);
-  }
 }
 
 function setLang(code, flag, name) {
@@ -2186,7 +2105,6 @@ function setLang(code, flag, name) {
   });
   document.getElementById('lang-dropdown').classList.remove('open');
   applyTranslations(code);
-  rebuildChannelList(code);
 }
 
 function toggleLangDropdown() {
@@ -2211,11 +2129,6 @@ function showPage(id, btn) {
   // Sync mobile nav
   const mobBtn = document.getElementById('mob-nav-' + id);
   if (mobBtn) mobBtn.classList.add('active');
-  // Auto-load #info channel when chat tab first opened
-  if (id === 'chat' && !_activeChanId && _firestoreDb) {
-    const infoBtn = document.getElementById('ch-btn-info');
-    switchCh('1492982005741129919', '#info', 'info', '#378ADD', infoBtn);
-  }
 }
 
 // ── Live chat state ────────────────────────────────────────────────────────
@@ -2725,11 +2638,6 @@ function addLang() {
     if (dot)  dot.style.background = '#e74c3c';
     if (text) text.textContent     = 'Error';
   }
-  // Auto-load #info if chat page is already active on init
-  if (document.getElementById('page-chat')?.classList.contains('active') && !_activeChanId && _firestoreDb) {
-    const infoBtn = document.getElementById('ch-btn-info');
-    switchCh('1492982005741129919', '#info', 'info', '#378ADD', infoBtn);
-  }
 })();
 
 // ── Clans — Firebase live loader ───────────────────────────────────────────
@@ -2943,7 +2851,6 @@ async function tryAuth() {
 
 function _startSession(payload, rawToken) {
   SESSION = payload;
-  // Store raw token so the chat send function can use it
   if (rawToken) _rawPortalToken = rawToken;
   // Show/hide Admin tab
   document.getElementById('nav-admin').style.display = payload.admin ? '' : 'none';
@@ -2961,13 +2868,6 @@ function _startSession(payload, rawToken) {
   bar.style.display = 'flex';
   // Dismiss the gate
   document.getElementById('auth-gate').style.display = 'none';
-  // Enable chat input now that we have an identity
-  const inp = document.getElementById('chat-input');
-  const btn = document.getElementById('chat-send-btn');
-  if (_activeChanId) {
-    if (inp) { inp.disabled = false; inp.placeholder = 'Message ' + (_activeChanName || '#channel') + '…'; }
-    if (btn) btn.disabled = false;
-  }
 }
 
 function _showFallback(errorMsg) {

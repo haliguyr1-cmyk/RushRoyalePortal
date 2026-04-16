@@ -134,7 +134,9 @@
   .ch-btn.active { background: rgba(212,160,23,0.08); color: var(--gold); font-weight: 500; }
   .ch-icon { font-size: 15px; flex-shrink: 0; }
   .ch-announce-dot { width: 8px; height: 8px; border-radius: 50%; background: #e67e22; flex-shrink: 0; }
-  .ch-info-dot { width: 8px; height: 8px; border-radius: 50%; background: #378ADD; flex-shrink: 0; }
+  .ch-info-dot     { width: 8px; height: 8px; border-radius: 50%; background: #378ADD; flex-shrink: 0; }
+  .ch-chat-dot     { width: 8px; height: 8px; border-radius: 50%; background: #2ecc71; flex-shrink: 0; }
+  .ch-dev-dot      { width: 8px; height: 8px; border-radius: 50%; background: #9b59b6; flex-shrink: 0; }
 
   /* ── Chat panel ── */
   .chat-area {
@@ -373,6 +375,12 @@
     <button class="ch-btn" id="btn-announcements" onclick="switchCh('1493954042605469797','#announcements','announcements')">
       <div class="ch-announce-dot"></div><span class="ch-label">#announcements</span>
     </button>
+    <button class="ch-btn" id="btn-chat" onclick="switchCh('1492982005741129920','#chat','chat')">
+      <div class="ch-chat-dot"></div><span class="ch-label">#chat</span>
+    </button>
+    <button class="ch-btn" id="btn-for-developers" onclick="switchCh('1492982005741129921','#for-developers','for-developers')">
+      <div class="ch-dev-dot"></div><span class="ch-label">#for-developers</span>
+    </button>
   </div>
 
   <!-- Chat area -->
@@ -465,8 +473,10 @@ const FIREBASE_CONFIG = {
 
 // Channel metadata
 const CHANNELS = {
-  '1492982005741129919': { name: '#info', sub: 'Info & updates channel', color: '#378ADD', dot: '#378ADD', type: 'info' },
-  '1493954042605469797': { name: '#announcements', sub: 'Server announcements', color: '#e67e22', dot: '#e67e22', type: 'announcements' }
+  '1492982005741129919': { name: '#info',            sub: 'Info & updates channel',    color: '#378ADD', dot: '#378ADD', type: 'info'          },
+  '1493954042605469797': { name: '#announcements',   sub: 'Server announcements',       color: '#e67e22', dot: '#e67e22', type: 'announcements'  },
+  '1492982005741129920': { name: '#chat',            sub: 'General community chat',     color: '#2ecc71', dot: '#2ecc71', type: 'chat'           },
+  '1492982005741129921': { name: '#for-developers',  sub: 'Messages to the developers', color: '#9b59b6', dot: '#9b59b6', type: 'for-developers' },
 };
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -728,7 +738,7 @@ function _setStatus(live) {
 // ── Switch channel ─────────────────────────────────────────────────────────
 function switchCh(channelId, name, type) {
   document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active'));
-  const btn = document.getElementById('btn-' + (channelId === '1492982005741129919' ? 'info' : 'announcements'));
+  const btn = document.getElementById('btn-' + type);
   if (btn) btn.classList.add('active');
 
   _activeChanId   = channelId;
