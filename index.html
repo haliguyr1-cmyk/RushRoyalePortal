@@ -2360,6 +2360,8 @@ function setLang(code, flag, name) {
   });
   document.getElementById('lang-dropdown').classList.remove('open');
   applyTranslations(code);
+  // Persist so chat.html can read it
+  try { localStorage.setItem('rr_lang_code', code); localStorage.setItem('rr_lang_flag', flag); } catch(_) {}
 }
 
 function toggleLangDropdown() {

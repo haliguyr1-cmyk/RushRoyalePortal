@@ -361,6 +361,9 @@
   <div id="user-info-bar">
     <!-- filled by JS -->
   </div>
+  <div id="lang-indicator" style="margin-left:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:4px 8px;font-size:11px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:4px;flex-shrink:0;cursor:pointer;text-decoration:none" title="Change language in Portal" onclick="window.location.href='index.html'">
+    <span id="lang-indicator-flag">🇬🇧</span><span id="lang-indicator-code">EN</span>
+  </div>
 </div>
 
 <!-- Main -->
@@ -479,6 +482,51 @@ const CHANNELS = {
   '1492982005741129921': { name: '#for-developers',  sub: 'Messages to the developers', color: '#9b59b6', dot: '#9b59b6', type: 'for-developers' },
 };
 
+// ── Language ────────────────────────────────────────────────────────────────
+// UI strings for chat.html (matches keys used via data-key or direct references)
+const CHAT_T = {
+  EN: { log_in_placeholder: 'Log in to send messages…', sidebar_hdr: 'Channels', back_btn: '← Portal', live_status: 'Live — messages sync in real time', poll_status: 'Polling every 10 s', loading: '⏳ Loading messages…', send_btn: 'Send' },
+  RU: { log_in_placeholder: 'Войдите, чтобы отправить сообщение…', sidebar_hdr: 'Каналы', back_btn: '← Портал', live_status: 'В эфире — сообщения синхронизируются в реальном времени', poll_status: 'Опрос каждые 10 с', loading: '⏳ Загрузка сообщений…', send_btn: 'Отправить' },
+  DE: { log_in_placeholder: 'Anmelden zum Senden…', sidebar_hdr: 'Kanäle', back_btn: '← Portal', live_status: 'Live — Nachrichten werden in Echtzeit synchronisiert', poll_status: 'Abfrage alle 10 s', loading: '⏳ Nachrichten werden geladen…', send_btn: 'Senden' },
+  ES: { log_in_placeholder: 'Inicia sesión para enviar mensajes…', sidebar_hdr: 'Canales', back_btn: '← Portal', live_status: 'En vivo — mensajes sincronizados en tiempo real', poll_status: 'Sondeo cada 10 s', loading: '⏳ Cargando mensajes…', send_btn: 'Enviar' },
+  FR: { log_in_placeholder: 'Connectez-vous pour envoyer des messages…', sidebar_hdr: 'Canaux', back_btn: '← Portail', live_status: 'En direct — messages synchronisés en temps réel', poll_status: 'Sondage toutes les 10 s', loading: '⏳ Chargement des messages…', send_btn: 'Envoyer' },
+  IT: { log_in_placeholder: 'Accedi per inviare messaggi…', sidebar_hdr: 'Canali', back_btn: '← Portale', live_status: 'Dal vivo — messaggi sincronizzati in tempo reale', poll_status: 'Polling ogni 10 s', loading: '⏳ Caricamento messaggi…', send_btn: 'Invia' },
+  ZH: { log_in_placeholder: '登录以发送消息…', sidebar_hdr: '频道', back_btn: '← 门户', live_status: '直播中 — 消息实时同步', poll_status: '每10秒轮询一次', loading: '⏳ 正在加载消息…', send_btn: '发送' },
+};
+const LANG_FLAGS = { EN:'🇬🇧', RU:'🇷🇺', DE:'🇩🇪', ES:'🇪🇸', FR:'🇫🇷', IT:'🇮🇹', ZH:'🇨🇳' };
+let _currentLang = 'EN';
+
+function _applyLang(code) {
+  _currentLang = code;
+  const t = CHAT_T[code] || CHAT_T['EN'];
+  // Back button
+  const back = document.querySelector('.topbar-back');
+  if (back) back.textContent = t.back_btn;
+  // Sidebar header
+  const shdr = document.querySelector('.sidebar-hdr');
+  if (shdr) shdr.textContent = t.sidebar_hdr;
+  // Send button
+  const sendBtn = document.getElementById('chat-send-btn');
+  if (sendBtn) sendBtn.textContent = t.send_btn;
+  // Input placeholder (only if disabled/logged out)
+  const inp = document.getElementById('chat-input');
+  if (inp && inp.disabled) inp.placeholder = t.log_in_placeholder;
+  // Language indicator in topbar
+  const flag = document.getElementById('lang-indicator-flag');
+  const lcode = document.getElementById('lang-indicator-code');
+  if (flag) flag.textContent = LANG_FLAGS[code] || '🇬🇧';
+  if (lcode) lcode.textContent = code;
+}
+
+// Read language saved by index.html and apply it
+(function() {
+  try {
+    const saved = localStorage.getItem('rr_lang_code');
+    const savedFlag = localStorage.getItem('rr_lang_flag');
+    if (saved && CHAT_T[saved]) _applyLang(saved);
+  } catch(_) {}
+})();
+
 // ── State ──────────────────────────────────────────────────────────────────
 let SESSION           = null;
 let _rawPortalToken   = '';
@@ -541,6 +589,8 @@ function _startSession(payload, rawToken) {
   bar.style.display = 'flex';
   document.getElementById('auth-gate').style.display = 'none';
   _enableInput();
+  // If Firebase is already ready (init() ran before login), subscribe now
+  if (_firestoreDb) _subscribe(_activeChanId);
 }
 function _showFallback(msg) {
   document.getElementById('auth-spinner').style.display = 'none';
@@ -729,7 +779,8 @@ function _setStatus(live) {
   const badge = document.getElementById('chat-conn-badge');
   if (bar)   bar.style.display    = 'flex';
   if (dot)   dot.style.background = live ? '#2ecc71' : '#e67e22';
-  if (text)  text.textContent     = live ? 'Live — messages sync in real time' : 'Polling every 10 s';
+  const _ct = CHAT_T[_currentLang] || CHAT_T['EN'];
+  if (text)  text.textContent     = live ? _ct.live_status : _ct.poll_status;
   if (badge) badge.style.display  = live ? '' : 'none';
   const upd = document.getElementById('last-updated');
   if (upd)   upd.textContent = 'Updated ' + new Date().toLocaleTimeString();
@@ -965,17 +1016,16 @@ document.addEventListener('click', e => {
 
 // ── Init ───────────────────────────────────────────────────────────────────
 (async function init() {
+  // Wait for the Firebase ES module to signal ready (it sets window._firebaseReady)
+  // Use a MutationObserver-style poll with no hard cap — the module will always load.
   await new Promise(resolve => {
     if (window._firebaseReady) return resolve();
-    let waited = 0;
-    const iv = setInterval(() => {
-      waited += 50;
-      if (window._firebaseReady || waited >= 6000) { clearInterval(iv); resolve(); }
-    }, 50);
+    const iv = setInterval(() => { if (window._firebaseReady) { clearInterval(iv); resolve(); } }, 30);
+    // Safety fallback: if 10 s pass, try anyway (e.g. slow network)
+    setTimeout(() => { clearInterval(iv); resolve(); }, 10000);
   });
 
   if (_initFirebase()) {
-    // Auto-load the info channel
     _subscribe(_activeChanId);
   }
 })();
