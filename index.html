@@ -3460,12 +3460,14 @@ function ctSwitchCh(channelId, name, type, color, btn) {
 async function _ctInit() {
   if (_ctChatInited) return;
   _ctChatInited = true;
-  // Wait for Firebase (may already be ready from portal init)
+  // Wait for Firebase SDK module to signal ready
   await new Promise(resolve => {
-    if (_firestoreDb) return resolve();
+    if (window._firebaseReady) return resolve();
     let w = 0;
-    const iv = setInterval(() => { w+=50; if (_firestoreDb || w>6000) { clearInterval(iv); resolve(); } }, 50);
+    const iv = setInterval(() => { w+=50; if (window._firebaseReady || w>8000) { clearInterval(iv); resolve(); } }, 50);
   });
+  // If initChat() hasn't set _firestoreDb yet, do it ourselves
+  if (!_firestoreDb) _initFirebase();
   _ctSubscribe(_ctActiveChanId);
 }
 
