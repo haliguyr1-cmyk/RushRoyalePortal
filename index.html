@@ -1516,14 +1516,14 @@
 
     <!-- Sidebar -->
     <div id="chat-sidebar">
-      <div class="sb-hdr">Channels</div>
+      <div class="sb-hdr" data-key="chat_channels">Channels</div>
       <button class="sc-btn active" id="sc-btn-info" onclick="ctSwitchCh('1492982005741129919','#info','info','#378ADD',this)">
         <div class="sc-dot" style="background:#378ADD"></div><span class="cl">#info</span>
       </button>
       <button class="sc-btn" id="sc-btn-announcements" onclick="ctSwitchCh('1493954042605469797','#announcements','announcements','#e67e22',this)">
         <div class="sc-dot" style="background:#e67e22"></div><span class="cl">#announcements</span>
       </button>
-      <button class="sc-btn" id="sc-btn-chat" onclick="ctSwitchCh('1492982005741129920','#chat','chat','#2ecc71',this)">
+      <button class="sc-btn" id="sc-btn-chat" onclick="ctSwitchCh('1492982822095556698','#chat','chat','#2ecc71',this)">
         <div class="sc-dot" style="background:#2ecc71"></div><span class="cl">#chat</span>
       </button>
       <button class="sc-btn" id="sc-btn-for-developers" onclick="ctSwitchCh('1492982005741129921','#for-developers','for-developers','#9b59b6',this)">
@@ -1578,10 +1578,11 @@
           style="background:none;border:none;cursor:pointer;font-size:18px;line-height:1;padding:4px;border-radius:6px;transition:background 0.1s;color:var(--text2)">😊</button>
         <textarea id="chat-tab-input" rows="1"
           placeholder="Log in to send messages…"
+          data-placeholder="chat_login_placeholder"
           onkeydown="ctOnKeydown(event)"
           oninput="ctAutoResize(this)"
           disabled></textarea>
-        <button id="chat-tab-send" onclick="ctSendMsg()" disabled>Send</button>
+        <button id="chat-tab-send" onclick="ctSendMsg()" disabled data-key="chat_send">Send</button>
       </div>
     </div>
 
@@ -1817,6 +1818,7 @@ const T = {
     clear_emoji:'✕  Clear emoji cache', clear_sticker:'✕  Clear sticker cache',
     reset_config:'⚠  Reset all config',
     active_langs:'Active Languages', add_lang_btn:'Add',
+    chat_channels:'Channels', chat_send:'Send', chat_login_placeholder:'Log in to send messages…', chat_live:'Live — messages sync in real time', chat_poll:'Polling every 10 s', chat_loading:'⏳ Loading messages…',
     // Boycott banner
     boycott_title:'Draft Action Plan — The Boycott',
     boycott_intro:'We propose a boycott of the next DPS unit.',
@@ -1898,6 +1900,7 @@ const T = {
     clear_emoji:'✕  Очистить кэш эмодзи', clear_sticker:'✕  Очистить кэш стикеров',
     reset_config:'⚠  Сбросить все настройки',
     active_langs:'Активные языки', add_lang_btn:'Добавить',
+    chat_channels:'Каналы', chat_send:'Отправить', chat_login_placeholder:'Войдите, чтобы писать…', chat_live:'В эфире — сообщения в реальном времени', chat_poll:'Опрос каждые 10 с', chat_loading:'⏳ Загрузка…',
     boycott_title:'Черновик плана действий — Бойкот',
     boycott_intro:'Мы предлагаем бойкот следующего DPS-юнита.',
     boycott_reasons_lbl:'Причины выбора DPS, а не вспомогательного юнита:',
@@ -1977,6 +1980,7 @@ const T = {
     clear_emoji:'✕  Emoji-Cache leeren', clear_sticker:'✕  Sticker-Cache leeren',
     reset_config:'⚠  Alle Einstellungen zurücksetzen',
     active_langs:'Aktive Sprachen', add_lang_btn:'Hinzufügen',
+    chat_channels:'Kanäle', chat_send:'Senden', chat_login_placeholder:'Anmelden zum Schreiben…', chat_live:'Live — Nachrichten in Echtzeit', chat_poll:'Abfrage alle 10 s', chat_loading:'⏳ Wird geladen…',
     boycott_title:'Aktionsplanentwurf — Der Boykott',
     boycott_intro:'Wir schlagen einen Boykott der nächsten DPS-Einheit vor.',
     boycott_reasons_lbl:'Gründe für die Wahl eines DPS statt einer Support-Einheit:',
@@ -2056,6 +2060,7 @@ const T = {
     clear_emoji:'✕  Limpiar caché de emojis', clear_sticker:'✕  Limpiar caché de stickers',
     reset_config:'⚠  Restablecer toda la configuración',
     active_langs:'Idiomas activos', add_lang_btn:'Añadir',
+    chat_channels:'Canales', chat_send:'Enviar', chat_login_placeholder:'Inicia sesión para escribir…', chat_live:'En vivo — mensajes en tiempo real', chat_poll:'Sondeo cada 10 s', chat_loading:'⏳ Cargando…',
     boycott_title:'Borrador del plan de acción — El boicot',
     boycott_intro:'Proponemos un boicot a la próxima unidad DPS.',
     boycott_reasons_lbl:'Razones para elegir un DPS en lugar de una unidad de soporte:',
@@ -2135,6 +2140,7 @@ const T = {
     clear_emoji:'✕  Vider le cache emoji', clear_sticker:'✕  Vider le cache stickers',
     reset_config:'⚠  Réinitialiser toute la config',
     active_langs:'Langues actives', add_lang_btn:'Ajouter',
+    chat_channels:'Canaux', chat_send:'Envoyer', chat_login_placeholder:'Connectez-vous pour écrire…', chat_live:'En direct — messages en temps réel', chat_poll:'Sondage toutes les 10 s', chat_loading:'⏳ Chargement…',
     boycott_title:'Projet de plan d\'action — Le boycott',
     boycott_intro:'Nous proposons un boycott de la prochaine unité DPS.',
     boycott_reasons_lbl:'Raisons de cibler un DPS plutôt qu\'une unité de soutien :',
@@ -2214,6 +2220,7 @@ const T = {
     clear_emoji:'✕  Svuota cache emoji', clear_sticker:'✕  Svuota cache sticker',
     reset_config:'⚠  Reimposta tutta la config',
     active_langs:'Lingue attive', add_lang_btn:'Aggiungi',
+    chat_channels:'Canali', chat_send:'Invia', chat_login_placeholder:'Accedi per scrivere…', chat_live:'Dal vivo — messaggi in tempo reale', chat_poll:'Polling ogni 10 s', chat_loading:'⏳ Caricamento…',
     boycott_title:'Bozza del piano d\'azione — Il boicottaggio',
     boycott_intro:'Proponiamo un boicottaggio della prossima unità DPS.',
     boycott_reasons_lbl:'Motivi per cui prendere di mira un DPS anziché un\'unità di supporto:',
@@ -2293,6 +2300,7 @@ const T = {
     clear_emoji:'✕  清除表情包缓存', clear_sticker:'✕  清除贴纸缓存',
     reset_config:'⚠  重置所有配置',
     active_langs:'活跃语言', add_lang_btn:'添加',
+    chat_channels:'频道', chat_send:'发送', chat_login_placeholder:'登录以发送消息…', chat_live:'直播中 — 消息实时同步', chat_poll:'每10秒轮询一次', chat_loading:'⏳ 加载中…',
     boycott_title:'行动计划草案 — 抵制',
     boycott_intro:'我们提议抵制下一个DPS单位。',
     boycott_reasons_lbl:'选择DPS而非辅助单位的原因：',
@@ -3393,7 +3401,8 @@ function _ctSetStatus(live) {
   const bdg  = document.getElementById('chat-tab-conn-badge');
   if (bar) bar.style.display = 'flex';
   if (dot) dot.style.background = live ? '#2ecc71' : '#e67e22';
-  if (txt) txt.textContent = live ? 'Live — messages sync in real time' : 'Polling every 10 s';
+  const _t = T[currentLang] || T['EN'];
+  if (txt) txt.textContent = live ? _t.chat_live : _t.chat_poll;
   if (bdg) bdg.style.display = live ? '' : 'none';
   const upd = document.getElementById('chat-tab-last-updated');
   if (upd) upd.textContent = 'Updated ' + new Date().toLocaleTimeString();
@@ -3454,7 +3463,8 @@ function ctSwitchCh(channelId, name, type, color, btn) {
   document.getElementById('chat-tab-hdr-sub').textContent  = ch.sub  || '';
   if (SESSION) _ctEnableInput();
   const msgs = document.getElementById('chat-tab-messages');
-  msgs.innerHTML = `<div id="chat-tab-welcome" style="text-align:center;color:var(--text3);font-size:13px;padding:4rem 0">⏳ Loading messages…</div>`;
+  const _tl = T[currentLang] || T['EN'];
+  msgs.innerHTML = `<div id="chat-tab-welcome" style="text-align:center;color:var(--text3);font-size:13px;padding:4rem 0">${_tl.chat_loading}</div>`;
   if (channelId && _firestoreDb) _ctSubscribe(channelId);
 }
 
@@ -3510,7 +3520,7 @@ function _ctDisableInput() {
   const btn = document.getElementById('chat-tab-send');
   if (!inp) return;
   inp.disabled = true;
-  inp.placeholder = 'Log in to send messages…';
+  inp.placeholder = (T[currentLang] || T['EN']).chat_login_placeholder;
   if (btn) btn.disabled = true;
 }
 
