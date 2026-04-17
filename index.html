@@ -1126,6 +1126,7 @@
     <button class="nav-btn" id="nav-action" onclick="showPage('action',this)" data-key="nav_action">Action Plan</button>
     <button class="nav-btn" id="nav-election" onclick="showPage('election',this)" data-key="nav_election">Representative Application</button>
     <button class="nav-btn" id="nav-chat" onclick="showPage('chat',this)" data-key="nav_chat">Chat</button>
+    <button class="nav-btn" id="nav-moloch" onclick="showPage('moloch',this)" style="color:#c0392b;border:1px solid rgba(192,57,43,0.3)">⚠ Dark Moloch</button>
     <button class="nav-btn" id="nav-admin" onclick="showPage('admin',this)" style="display:none" data-key="nav_admin">Admin</button>
   </div>
   <!-- Controls: user chip + [lang above hamburger] -->
@@ -1164,6 +1165,7 @@
   <button class="nav-btn" id="mob-nav-action" onclick="showPageMobile('action')" data-key="nav_action">Action Plan</button>
   <button class="nav-btn" id="mob-nav-election" onclick="showPageMobile('election')" data-key="nav_election">Representative Application</button>
   <button class="nav-btn" id="mob-nav-chat" onclick="showPageMobile('chat')" data-key="nav_chat">Chat</button>
+  <button class="nav-btn" id="mob-nav-moloch" onclick="showPageMobile('moloch')" style="color:#c0392b">⚠ Dark Moloch</button>
   <button class="nav-btn" id="mob-nav-admin" onclick="showPageMobile('admin')" style="display:none" data-key="nav_admin">Admin</button>
 </div>
 
@@ -1567,6 +1569,138 @@
       <button class="btn" onclick="addLang()" data-key="add_lang_btn">Add</button>
     </div>
   </div>
+</div>
+
+<!-- ══ DARK MOLOCH ══ -->
+<div id="page-moloch" class="page">
+
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:2rem">
+    <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.3);border-radius:10px;padding:6px 18px;margin-bottom:1.25rem">
+      <span style="font-size:12px;font-weight:700;color:#e74c3c;text-transform:uppercase;letter-spacing:0.1em">⚠ Upcoming Unit</span>
+    </div>
+    <div class="page-title" style="font-size:28px;margin-bottom:0.5rem">Could This Be The Next Boycotted DPS?</div>
+    <p style="font-size:14px;color:var(--text2);max-width:560px;margin:0 auto;line-height:1.65">A new unit has been spotted — <strong style="color:var(--text)">Dark Moloch</strong>. Stay tuned for more information regarding this unit and whether it will be subject to a community boycott.</p>
+  </div>
+
+  <!-- Silhouette reveal card -->
+  <div style="display:flex;justify-content:center;margin-bottom:2rem">
+    <div class="card" style="max-width:400px;width:100%;text-align:center;border-color:rgba(192,57,43,0.3);background:linear-gradient(135deg,rgba(192,57,43,0.06),var(--bg2))">
+      <div class="card-title" style="color:#e74c3c;text-align:center;font-size:13px">🔍 Identity Unknown</div>
+      <img src="https://raw.githubusercontent.com/placeholder/placeholder/main/Universal_Event_NewPawn_02.png"
+           onerror="this.style.display='none';document.getElementById('moloch-silhouette-fallback').style.display='block'"
+           id="moloch-silhouette-img"
+           alt="Dark Moloch silhouette"
+           style="max-width:280px;width:100%;margin:0 auto;display:block;filter:drop-shadow(0 0 24px rgba(192,57,43,0.4))">
+      <!-- Fallback: embed the uploaded silhouette as object -->
+      <div id="moloch-silhouette-fallback" style="display:none;padding:1rem;color:var(--text3);font-size:13px">
+        <div style="font-size:48px;margin-bottom:8px">🔮</div>
+        Silhouette image — upload to GitHub to display
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:12px;font-style:italic">Who lurks in the shadows?</p>
+    </div>
+  </div>
+
+  <!-- Credits banner -->
+  <div style="background:linear-gradient(135deg,rgba(212,160,23,0.06),rgba(192,57,43,0.05));border:1px solid var(--border2);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:2rem">
+    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px">🙏 Special Thanks</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;flex:1;min-width:200px">
+        <span style="font-size:22px">🎬</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Aymeric Cassel</div>
+          <div style="font-size:12px;color:var(--text2)">Video footage — first sighting of Dark Moloch in the wild</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;flex:1;min-width:200px">
+        <span style="font-size:22px">🎨</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Vroydus</div>
+          <div style="font-size:12px;color:var(--text2)">Artwork — all Dark Moloch illustrations and assets</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:2rem">
+
+    <!-- Video section -->
+    <div class="card">
+      <div class="card-title">🎬 First Sighting — Video by Aymeric Cassel</div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center">
+        <!-- Replace the src with your GitHub raw video URL once uploaded -->
+        <video controls style="width:100%;height:100%;display:block;object-fit:cover"
+               poster="">
+          <source src="https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/ScreenRecording_04-17-2026_19-25-10_1.mov" type="video/mp4">
+          <div style="padding:2rem;text-align:center;color:var(--text3)">
+            <div style="font-size:32px;margin-bottom:8px">▶</div>
+            <div style="font-size:13px">Update the GitHub URL in the HTML to display the video</div>
+          </div>
+        </video>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px">Credit: <strong style="color:var(--text)">Aymeric Cassel</strong> — footage of Dark Moloch's first known appearance</p>
+    </div>
+
+    <!-- Card art -->
+    <div class="card">
+      <div class="card-title">🎨 Card Art — by Vroydus</div>
+      <div style="display:flex;justify-content:center;align-items:center;min-height:200px">
+        <img src="https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/Card_Opened_Universal2026_Pawn_DarkMoloch_02.png"
+             alt="Dark Moloch card art"
+             style="max-width:240px;width:100%;border-radius:8px;filter:drop-shadow(0 4px 16px rgba(192,57,43,0.3))"
+             onerror="this.outerHTML='<div style=\'text-align:center;color:var(--text3);font-size:13px;padding:2rem\'><div style=\'font-size:32px;margin-bottom:8px\'>🃏</div>Upload card art to GitHub to display</div>'">
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px">Credit: <strong style="color:var(--text)">Vroydus</strong></p>
+    </div>
+  </div>
+
+  <!-- Artwork gallery -->
+  <div class="card" style="margin-bottom:2rem">
+    <div class="card-title">🖼 Full Artwork Gallery — by Vroydus</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-top:4px">
+
+      <div style="text-align:center">
+        <img src="https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/Avatar_NewPawnEvent_DarkMoloch_02.png"
+             alt="Dark Moloch Avatar"
+             style="width:100%;border-radius:8px;border:1px solid var(--border);filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4))"
+             onerror="this.style.display='none'">
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Avatar</div>
+      </div>
+
+      <div style="text-align:center">
+        <img src="https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/UniversalEvent2026_banner_BP_DarkMoloch_02.png"
+             alt="Dark Moloch Event Banner"
+             style="width:100%;border-radius:8px;border:1px solid var(--border);filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4))"
+             onerror="this.style.display='none'">
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Event Banner</div>
+      </div>
+
+      <div style="text-align:center">
+        <img src="https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/UniversalEvent_roulette_reward_DarkMoloch.png"
+             alt="Dark Moloch Roulette Reward"
+             style="width:100%;border-radius:8px;border:1px solid var(--border);filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4))"
+             onerror="this.style.display='none'">
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Roulette Reward</div>
+      </div>
+
+      <div style="text-align:center">
+        <img src="https://raw.githubusercontent.com/YOUR_USER/YOUR_REPO/main/Universal_Event_NewPawn_02.png"
+             alt="Dark Moloch Silhouette"
+             style="width:100%;border-radius:8px;border:1px solid var(--border);filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4))"
+             onerror="this.style.display='none'">
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">New Pawn Reveal</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Stay tuned footer -->
+  <div style="text-align:center;padding:1.5rem;background:var(--bg2);border:1px solid rgba(192,57,43,0.25);border-radius:var(--radius)">
+    <div style="font-size:20px;margin-bottom:8px">⏳</div>
+    <div style="font-family:'Cinzel',serif;font-size:15px;color:var(--gold);font-weight:600;margin-bottom:6px">Stay Tuned</div>
+    <p style="font-size:13px;color:var(--text2);max-width:480px;margin:0 auto;line-height:1.65">More information regarding <strong style="color:var(--text)">Dark Moloch</strong> is coming. Once its release details are confirmed, the community will decide whether this unit will be subject to a boycott.</p>
+  </div>
+
 </div>
 
 </div><!-- /content -->
