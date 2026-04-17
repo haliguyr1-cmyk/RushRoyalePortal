@@ -1514,21 +1514,10 @@
 <div id="page-chat" class="page">
   <div id="chat-layout">
 
-    <!-- Sidebar -->
+    <!-- Sidebar — built dynamically by ctRebuildSidebar() -->
     <div id="chat-sidebar">
       <div class="sb-hdr" data-key="chat_channels">Channels</div>
-      <button class="sc-btn active" id="sc-btn-info" onclick="ctSwitchCh('1492982005741129919','#info','info','#378ADD',this)">
-        <div class="sc-dot" style="background:#378ADD"></div><span class="cl">#info</span>
-      </button>
-      <button class="sc-btn" id="sc-btn-announcements" onclick="ctSwitchCh('1493954042605469797','#announcements','announcements','#e67e22',this)">
-        <div class="sc-dot" style="background:#e67e22"></div><span class="cl">#announcements</span>
-      </button>
-      <button class="sc-btn" id="sc-btn-chat" onclick="ctSwitchCh('1492982822095556698','#chat','chat','#2ecc71',this)">
-        <div class="sc-dot" style="background:#2ecc71"></div><span class="cl">#chat</span>
-      </button>
-      <button class="sc-btn" id="sc-btn-for-developers" onclick="ctSwitchCh('1492982005741129921','#for-developers','for-developers','#9b59b6',this)">
-        <div class="sc-dot" style="background:#9b59b6"></div><span class="cl">#for-developers</span>
-      </button>
+      <div id="ct-channel-list"></div>
     </div>
 
     <!-- Chat area -->
@@ -1594,18 +1583,40 @@
   <div class="page-title" data-key="admin_title">Admin</div>
   <div class="grid2" style="margin-bottom:1rem">
     <div class="card">
-      <div class="card-title" data-key="ch_group_config">Channel Group Config</div>
-      <div class="form-row"><label class="form-label" data-key="form_group_name">Group Name</label><input class="form-input" placeholder="e.g. international-chat"></div>
-      <div class="form-row"><label class="form-label" data-key="form_language">Language</label>
-        <select class="form-select"><option>EN</option><option>RU</option><option>DE</option><option>ES</option><option>FR</option><option>IT</option><option>ZH</option><option>AR</option></select>
+      <div class="card-title">Chat Channel Manager</div>
+      <div class="form-row" style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px">
+          <label class="form-label">Language</label>
+          <select class="form-select" id="admin-ch-lang" onchange="adminRenderChannels()">
+            <option value="EN">EN 🇬🇧</option>
+            <option value="RU">RU 🇷🇺</option>
+            <option value="DE">DE 🇩🇪</option>
+            <option value="ES">ES 🇪🇸</option>
+            <option value="FR">FR 🇫🇷</option>
+            <option value="IT">IT 🇮🇹</option>
+            <option value="ZH">ZH 🇨🇳</option>
+          </select>
+        </div>
       </div>
-      <div class="form-row"><label class="form-label" data-key="form_discord_id">Discord Channel ID</label><input class="form-input" placeholder="e.g. 1234567890"></div>
-      <button class="btn" style="margin-bottom:1rem" onclick="alert('Channel mapping saved!')" data-key="map_channel_btn">Map Channel</button>
-      <div class="divider"></div>
-      <div class="card-title" data-key="tg_thread_config">Telegram Thread Config</div>
-      <div class="form-row"><label class="form-label" data-key="form_group_name">Group Name</label><input class="form-input" placeholder="e.g. international-chat"></div>
-      <div class="form-row"><label class="form-label" data-key="form_thread_id">Thread ID</label><input class="form-input" placeholder="e.g. 42 — right-click topic in Telegram → Copy Link → last number in URL"></div>
-      <button class="btn" onclick="alert('Telegram thread saved!')" data-key="set_thread_btn">Set Thread</button>
+      <div id="admin-ch-list" style="margin:10px 0;display:flex;flex-direction:column;gap:6px"></div>
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Add New Channel</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <input class="form-input" id="admin-new-ch-name" placeholder="Channel name (e.g. chat)" style="flex:1;min-width:100px">
+          <input class="form-input" id="admin-new-ch-id" placeholder="Discord ID (e.g. 1492982...)" style="flex:1;min-width:140px">
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <select class="form-select" id="admin-new-ch-color" style="max-width:160px">
+            <option value="#378ADD">🔵 Blue</option>
+            <option value="#2ecc71">🟢 Green</option>
+            <option value="#e67e22">🟠 Orange</option>
+            <option value="#9b59b6">🟣 Purple</option>
+            <option value="#e74c3c">🔴 Red</option>
+            <option value="#D4A017">🟡 Gold</option>
+          </select>
+          <button class="btn" onclick="adminAddChannel()" style="flex-shrink:0">+ Add Channel</button>
+        </div>
+      </div>
     </div>
 
     <div>
@@ -2370,6 +2381,8 @@ function setLang(code, flag, name) {
   applyTranslations(code);
   // Persist so chat.html can read it
   try { localStorage.setItem('rr_lang_code', code); localStorage.setItem('rr_lang_flag', flag); } catch(_) {}
+  // Rebuild chat sidebar for the new language
+  if (typeof ctRebuildSidebar === 'function') ctRebuildSidebar();
 }
 
 function toggleLangDropdown() {
@@ -3321,12 +3334,134 @@ document.addEventListener('click', e => {
 // EMBEDDED CHAT TAB — all functions prefixed ct* to avoid clashes
 // Shares SESSION, _firestoreDb, FIREBASE_CONFIG from above
 // ══════════════════════════════════════════════════════════════
-const CT_CHANNELS = {
-  '1492982005741129919': { name: '#info',           sub: 'Info & updates channel',    dot: '#378ADD', type: 'info'          },
-  '1493954042605469797': { name: '#announcements',  sub: 'Server announcements',      dot: '#e67e22', type: 'announcements'  },
-  '1492982822095556698': { name: '#chat',           sub: 'General community chat',    dot: '#2ecc71', type: 'chat'           },
-  '1492982005741129921': { name: '#for-developers', sub: 'Messages to the developers',dot: '#9b59b6', type: 'for-developers' },
+// ── Channel config — stored in localStorage, editable from Admin ──────────
+const _CHAN_STORAGE_KEY = 'rr_chat_channels';
+
+// Default channels (used if nothing in localStorage yet)
+const _DEFAULT_CHANNELS = {
+  EN: [
+    { id: '1492982005741129919', name: 'info',          color: '#378ADD' },
+    { id: '1493954042605469797', name: 'announcements', color: '#e67e22' },
+    { id: '1492982822095556698', name: 'chat',          color: '#2ecc71' },
+    { id: '1492982005741129921', name: 'for-developers',color: '#9b59b6' },
+  ],
+  RU: [], DE: [], ES: [], FR: [], IT: [], ZH: []
 };
+
+function _loadChannelConfig() {
+  try {
+    const s = localStorage.getItem(_CHAN_STORAGE_KEY);
+    if (s) return JSON.parse(s);
+  } catch(_) {}
+  return JSON.parse(JSON.stringify(_DEFAULT_CHANNELS));
+}
+function _saveChannelConfig(cfg) {
+  try { localStorage.setItem(_CHAN_STORAGE_KEY, JSON.stringify(cfg)); } catch(_) {}
+}
+
+let _chanConfig = _loadChannelConfig();
+
+// Build a flat CT_CHANNELS lookup from current config
+function _buildCTChannels() {
+  const map = {};
+  for (const lang of Object.keys(_chanConfig)) {
+    for (const ch of (_chanConfig[lang] || [])) {
+      map[ch.id] = { name: '#' + ch.name, sub: lang + ' channel', dot: ch.color, type: ch.name };
+    }
+  }
+  return map;
+}
+let CT_CHANNELS = _buildCTChannels();
+
+// ── Rebuild chat sidebar for current language ──────────────────────────────
+function ctRebuildSidebar() {
+  const lang = currentLang || 'EN';
+  const channels = _chanConfig[lang] || _chanConfig['EN'] || [];
+  const list = document.getElementById('ct-channel-list');
+  if (!list) return;
+
+  list.innerHTML = '';
+
+  if (!channels.length) {
+    list.innerHTML = '<div style="padding:12px 14px;font-size:12px;color:var(--text3)">No channels configured for ' + lang + '.<br>Add them in Admin.</div>';
+    // Clear messages too
+    document.getElementById('chat-tab-hdr-name').textContent = '—';
+    document.getElementById('chat-tab-hdr-sub').textContent = '';
+    return;
+  }
+
+  channels.forEach((ch, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'sc-btn' + (i === 0 ? ' active' : '');
+    btn.id = 'sc-btn-' + ch.id;
+    btn.innerHTML = '<div class="sc-dot" style="background:' + ch.color + '"></div><span class="cl">#' + ch.name + '</span>';
+    btn.onclick = function() { ctSwitchCh(ch.id, '#' + ch.name, ch.name, ch.color, btn); };
+    list.appendChild(btn);
+  });
+
+  // Auto-select first channel
+  if (channels[0]) {
+    ctSwitchCh(channels[0].id, '#' + channels[0].name, channels[0].name, channels[0].color,
+      document.getElementById('sc-btn-' + channels[0].id));
+  }
+}
+
+// ── Admin: render channel list for selected language ───────────────────────
+function adminRenderChannels() {
+  const lang = document.getElementById('admin-ch-lang').value;
+  const channels = _chanConfig[lang] || [];
+  const list = document.getElementById('admin-ch-list');
+  if (!list) return;
+
+  if (!channels.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:6px 0">No channels yet for ' + lang + '. Add one below.</div>';
+    return;
+  }
+
+  list.innerHTML = channels.map((ch, i) => `
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <div style="width:10px;height:10px;border-radius:50%;background:${ch.color};flex-shrink:0"></div>
+      <input value="${ch.name}" style="background:var(--bg4);border:1px solid var(--border);border-radius:5px;padding:4px 8px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif;width:130px" oninput="adminUpdateChannel('${lang}',${i},'name',this.value)" placeholder="Channel name">
+      <input value="${ch.id}" style="background:var(--bg4);border:1px solid var(--border);border-radius:5px;padding:4px 8px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif;flex:1;min-width:140px;font-family:monospace" oninput="adminUpdateChannel('${lang}',${i},'id',this.value)" placeholder="Discord Channel ID">
+      <select style="background:var(--bg4);border:1px solid var(--border);border-radius:5px;padding:4px 6px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif" onchange="adminUpdateChannel('${lang}',${i},'color',this.value)">
+        ${[['#378ADD','🔵 Blue'],['#2ecc71','🟢 Green'],['#e67e22','🟠 Orange'],['#9b59b6','🟣 Purple'],['#e74c3c','🔴 Red'],['#D4A017','🟡 Gold']].map(([v,l]) => `<option value="${v}"${ch.color===v?' selected':''}>${l}</option>`).join('')}
+      </select>
+      <button onclick="adminRemoveChannel('${lang}',${i})" style="background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.3);border-radius:5px;padding:3px 8px;font-size:12px;color:#e74c3c;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0">✕ Remove</button>
+    </div>`).join('');
+}
+
+function adminUpdateChannel(lang, idx, field, value) {
+  if (!_chanConfig[lang]) return;
+  _chanConfig[lang][idx][field] = value;
+  _saveChannelConfig(_chanConfig);
+  CT_CHANNELS = _buildCTChannels();
+  ctRebuildSidebar();
+}
+
+function adminRemoveChannel(lang, idx) {
+  if (!_chanConfig[lang]) return;
+  _chanConfig[lang].splice(idx, 1);
+  _saveChannelConfig(_chanConfig);
+  CT_CHANNELS = _buildCTChannels();
+  adminRenderChannels();
+  ctRebuildSidebar();
+}
+
+function adminAddChannel() {
+  const lang  = document.getElementById('admin-ch-lang').value;
+  const name  = document.getElementById('admin-new-ch-name').value.trim().replace(/^#/, '');
+  const id    = document.getElementById('admin-new-ch-id').value.trim();
+  const color = document.getElementById('admin-new-ch-color').value;
+  if (!name || !id) { alert('Please enter both a channel name and a Discord ID.'); return; }
+  if (!_chanConfig[lang]) _chanConfig[lang] = [];
+  _chanConfig[lang].push({ id, name, color });
+  _saveChannelConfig(_chanConfig);
+  CT_CHANNELS = _buildCTChannels();
+  document.getElementById('admin-new-ch-name').value = '';
+  document.getElementById('admin-new-ch-id').value = '';
+  adminRenderChannels();
+  ctRebuildSidebar();
+}
 
 let _ctActiveChanId   = '1492982005741129919';
 let _ctActiveChanType = 'info';
@@ -3480,7 +3615,7 @@ async function _ctInit() {
   });
   // If initChat() hasn't set _firestoreDb yet, do it ourselves
   if (!_firestoreDb) _initFirebase();
-  _ctSubscribe(_ctActiveChanId);
+  ctRebuildSidebar();
 }
 
 // Hook into showPage / showPageMobile to init on first visit
@@ -3488,11 +3623,13 @@ const _ctOrigShowPage = window.showPage;
 window.showPage = function(id, btn) {
   _ctOrigShowPage(id, btn);
   if (id === 'chat') _ctInit();
+  if (id === 'admin') { setTimeout(adminRenderChannels, 50); }
 };
 const _ctOrigShowPageMobile = window.showPageMobile;
 window.showPageMobile = function(id) {
   _ctOrigShowPageMobile(id);
   if (id === 'chat') _ctInit();
+  if (id === 'admin') { setTimeout(adminRenderChannels, 50); }
 };
 
 // Also enable/disable input when session starts/ends
