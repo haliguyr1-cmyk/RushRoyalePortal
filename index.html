@@ -796,50 +796,72 @@
   }
   .btn-signout:hover { background: rgba(192,57,43,0.3); color: #e74c3c; }
 
-  /* ── Boycott notice ─────────────────────────────────────────────────────── */
-  .boycott-banner {
+  /* ── Boycott accordion ──────────────────────────────────────────────────── */
+  .boycott-header-banner {
     background: linear-gradient(135deg, rgba(192,57,43,0.08), rgba(212,160,23,0.06));
     border: 1px solid rgba(212,160,23,0.25);
     border-left: 3px solid var(--gold);
     border-radius: var(--radius);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .boycott-title {
-    font-family: 'Cinzel', serif;
-    font-size: 14px; font-weight: 700;
-    color: var(--gold); letter-spacing: 0.05em;
+    padding: 1rem 1.25rem;
     margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px;
   }
-  .boycott-body { font-size: 13px; color: var(--text2); line-height: 1.65; }
-  .boycott-body p { margin-bottom: 8px; }
-  .boycott-body p:last-child { margin-bottom: 0; }
-  .boycott-body ul { padding-left: 1.2rem; margin: 6px 0; }
-  .boycott-body li { margin-bottom: 4px; }
-  .boycott-body strong { color: var(--text); }
-  .boycott-discuss {
-    margin-top: 12px;
-    background: var(--bg3);
+  .boycott-header-title {
+    font-family: 'Cinzel', serif;
+    font-size: 15px; font-weight: 700;
+    color: var(--gold); letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .boycott-header-sub { font-size: 12px; color: var(--text3); }
+  .bacc-item {
+    background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 14px;
-  }
-  .boycott-discuss-title {
-    font-size: 10px; font-weight: 700;
-    color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em;
+    border-radius: var(--radius);
     margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
   }
-  .discuss-item {
-    display: flex; align-items: flex-start; gap: 8px;
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 12px; color: var(--text2); line-height: 1.5;
+  .bacc-item:hover { border-color: var(--border2); }
+  .bacc-item.open { border-color: rgba(212,160,23,0.35); }
+  .bacc-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px;
+    cursor: pointer; user-select: none;
+    transition: background 0.15s;
   }
-  .discuss-item:last-child { border-bottom: none; }
-  .discuss-bullet {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--gold); flex-shrink: 0; margin-top: 6px;
+  .bacc-header:hover { background: var(--bg3); }
+  .bacc-item.open .bacc-header { background: var(--bg3); }
+  .bacc-icon {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(212,160,23,0.1);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
   }
+  .bacc-title {
+    font-size: 13px; font-weight: 500;
+    color: var(--text); flex: 1;
+    font-family: 'Inter', sans-serif;
+  }
+  .bacc-chevron {
+    font-size: 11px; color: var(--text3);
+    transition: transform 0.25s ease; flex-shrink: 0;
+  }
+  .bacc-item.open .bacc-chevron { transform: rotate(180deg); }
+  .bacc-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .bacc-divider { height: 1px; background: var(--border); margin: 0 16px; }
+  .bacc-inner {
+    padding: 14px 16px 16px;
+    font-size: 13px; color: var(--text2); line-height: 1.7;
+  }
+  .bacc-inner p { margin-bottom: 9px; }
+  .bacc-inner p:last-child { margin-bottom: 0; }
+  .bacc-inner strong { color: var(--text); font-weight: 500; }
+  .bacc-inner em { color: var(--text3); font-style: italic; }
+  .bacc-inner ul { padding-left: 1.2rem; margin: 6px 0 9px; }
+  .bacc-inner li { margin-bottom: 5px; }
+  /* keep old classes referenced elsewhere */
+  .boycott-banner { display: none; }
+  .boycott-discuss { display: none; }
 
   /* ── Clans page ─────────────────────────────────────────────────────────── */
   .poster-group {
@@ -1175,26 +1197,117 @@
 <div id="page-overview" class="page active">
   <div class="page-title" data-key="overview_title">Overview</div>
 
-  <!-- Boycott Action Plan Description -->
-  <div class="boycott-banner">
-    <div class="boycott-title">🚫 <span data-key="boycott_title">Draft Action Plan — The Boycott</span></div>
-    <div class="boycott-body">
-      <p><strong data-key="boycott_intro">We propose a boycott of the next DPS unit.</strong></p>
-      <p data-key="boycott_reasons_lbl">Reasons for targeting a DPS rather than a support:</p>
-      <ul>
-        <li data-key="boycott_r1">Gives us time to get as many clans and players on board as possible — Truffle's release is too soon to organise mass collective action.</li>
-        <li data-key="boycott_r2">Easier to persuade players to boycott a DPS than a support unit.</li>
-        <li data-key="boycott_r3">Most players will eventually obtain Truffle; boycotting its event means players pay more for it, which would increase dev profit — the opposite of our goal.</li>
-      </ul>
-      <p data-key="boycott_statement">Leading up to the boycott, we will submit a <strong>joint statement to the developers</strong> signed by <strong>over 100 clans</strong>, outlining our concerns and notifying them of our planned actions. This will carry a weight the devs have never seen before from the community.</p>
-      <p data-key="boycott_decorations">On a designated date, all participating clans will ask their players to <strong>remove all decorations from their player profiles</strong> as a show of solidarity — a visible signal to devs of the strength of feeling across the entire player base.</p>
-      <p data-key="boycott_further">Further actions under discussion include non-participation in Round Table events and playtests.</p>
+  <!-- Boycott header banner -->
+  <div class="boycott-header-banner">
+    <div class="boycott-header-title">🚫 Rush Community Boycott — Announcement</div>
+    <div class="boycott-header-sub">Click any section below to expand full details. Hover to highlight.</div>
+  </div>
+
+  <!-- Accordion item 1 -->
+  <div class="bacc-item" id="bacc1">
+    <div class="bacc-header" onclick="baccToggle('bacc1')">
+      <div class="bacc-icon">❓</div>
+      <div class="bacc-title">Why are we boycotting the new unit?</div>
+      <div class="bacc-chevron">▼</div>
     </div>
-    <div class="boycott-discuss">
-      <div class="boycott-discuss-title">📋 <span data-key="boycott_discuss_title">Open Discussion Points</span></div>
-      <div class="discuss-item"><div class="discuss-bullet"></div><div data-key="boycott_dp1"><strong>2–3 Coordinators</strong> needed to take the Action Plan to completion — ideally the most experienced long-time players among us. See the separate Coordination &amp; Planning thread.</div></div>
-      <div class="discuss-item"><div class="discuss-bullet"></div><div data-key="boycott_dp2"><strong>Target unit consensus:</strong> Do we have agreement that the boycott targets the next DPS? Vote in the designated channel.</div></div>
-      <div class="discuss-item"><div class="discuss-bullet"></div><div data-key="boycott_dp3"><strong>Player profile changes (proposed by Pample):</strong> When do they go live? Exactly what changes? Does it include a clan description banner? How long do they stay in effect? (Proposals range from a few days to the full run-up to the boycott.)</div></div>
+    <div class="bacc-body" id="bacc1-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>We all fell in love with Rush or the community surrounding it and want it desperately to succeed. Many people have tried to pass on amazing suggestions and feedback through official channels — the main Discord, the Roundtable — but these have fallen on deaf ears.</p>
+        <p>Many, if not all of us, know someone who has quit the game because they either can't or don't want to spend just to enjoy it.</p>
+        <p>We have exhausted all formal discussion forums but receive nothing in return other than being palmed off. <strong>This boycott intends to target where the developers care most — their bottom line.</strong></p>
+        <p>We hope to force some degree of accountability and genuine dialogue to bring about meaningful improvements for the long-term health of the game.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion item 2 -->
+  <div class="bacc-item" id="bacc2">
+    <div class="bacc-header" onclick="baccToggle('bacc2')">
+      <div class="bacc-icon">📅</div>
+      <div class="bacc-title">When is this planned to go ahead?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="bacc2-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>The boycott begins on the <strong>release of the new unit</strong>. We ask that you encourage your community to not spend or participate in the Festival of Talents.</p>
+        <ul>
+          <li>Do not buy the new unit</li>
+          <li>Minimal (and if possible, zero) spending for the entire duration of the event</li>
+        </ul>
+        <p>More information will be provided towards the conclusion of the event on whether the spending boycott continues if meaningful dialogue hasn't been opened up.</p>
+        <p>We want to see <strong>genuine commitments to improvements with reasonable timelines</strong> — not vague promises of "soon."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion item 3 -->
+  <div class="bacc-item" id="bacc3">
+    <div class="bacc-header" onclick="baccToggle('bacc3')">
+      <div class="bacc-icon">✊</div>
+      <div class="bacc-title">What can you do right now?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="bacc3-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p><strong>Step 1 — Revert your profile:</strong> Change all cosmetics to the default Bombardier profile picture and remove all badges, titles, decorations, and frames.</p>
+        <p>This shows how coordinated and unified the community is. The blank profile movement has already been noticed — developers are said to have cited it as a reason for Deathwave's return and more favourable recent updates. Notably, CCs have been warned not to participate and threatened with removal from the CC programme, so <strong>CCs are exempt</strong>.</p>
+        <p><strong>Step 2 — Stop spending during the Festival of Talents.</strong> If you plan to purchase the season pass or future event passes (Mirror Match, Masters Tournament), please buy your platinum <em>beforehand</em> to minimise spending during the event period.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion item 4 -->
+  <div class="bacc-item" id="bacc4">
+    <div class="bacc-header" onclick="baccToggle('bacc4')">
+      <div class="bacc-icon">⚔️</div>
+      <div class="bacc-title">What if I face Moloch in PvP?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="bacc4-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>Not every player is reachable through Discord or community channels, so some Molochs will inevitably appear in PvP. We understand this.</p>
+        <p><strong>Please resist the temptation for this season.</strong> The unit will eventually be nerfed, and another will take its place. If you miss out on some leaderboard positions — remember, those positions won't mean much if the game's player base has left en masse.</p>
+        <p>For clans: if some members can't be reached and don't participate, <strong>we are not asking for them to be removed</strong>. Do whatever you feel is best as community leads. We cannot force anyone, but we hope most will agree once they understand the reasons.</p>
+        <p>As a community lead, leading by example will go further than anything else — your community watches you.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion item 5 -->
+  <div class="bacc-item" id="bacc5">
+    <div class="bacc-header" onclick="baccToggle('bacc5')">
+      <div class="bacc-icon">📋</div>
+      <div class="bacc-title">What are we actually asking for?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="bacc5-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>An open letter will be sent to the developers outlining in detail the points raised here and requesting reasonable, tangible improvements for the game's long-term health.</p>
+        <p><strong>We do not want to be treated as pay pigs.</strong> We want to be seen as the amazing community we actually are.</p>
+        <p><em>(Open letter link to be inserted here)</em></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion item 6 -->
+  <div class="bacc-item" id="bacc6">
+    <div class="bacc-header" onclick="baccToggle('bacc6')">
+      <div class="bacc-icon">🤝</div>
+      <div class="bacc-title">Conclusion — stand as one</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="bacc6-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>This is important — and potentially our only real shot to make an impact. Will we immediately get everything we want? No. Should that be reason to give up? Absolutely not.</p>
+        <p>We represent <strong>over 150 clans</strong> and together we can bring about real change when we work as one. Put down the wallet and pick up the metaphorical pitchfork — because we are doing this together.</p>
+        <p>If we stand as one, we will send a strong message. Please stand with us as we try to make this game better for every single member of our community.</p>
+      </div>
     </div>
   </div>
 
@@ -3839,6 +3952,22 @@ window.signOut = function() {
   if (typeof _ctOrigSignOut === 'function') _ctOrigSignOut();
   _ctDisableInput();
 };
+
+// ── Boycott accordion ──────────────────────────────────────────────────────
+function baccToggle(id) {
+  const item = document.getElementById(id);
+  const body = document.getElementById(id + '-body');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.bacc-item').forEach(i => {
+    i.classList.remove('open');
+    const b = document.getElementById(i.id + '-body');
+    if (b) b.style.maxHeight = '0';
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+}
 
 // ── Input helpers ──────────────────────────────────────────────────────────
 function _ctEnableInput() {
