@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rush Royale — Community Boycott Announcement</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4A017;
+    --gold-light: #F0C040;
+    --gold-dark: #A07810;
+    --bg: #0a0c10;
+    --bg2: #111318;
+    --bg3: #181c23;
+    --bg4: #1e2330;
+    --border: rgba(212,160,23,0.18);
+    --border2: rgba(212,160,23,0.35);
+    --text: #e8e0d0;
+    --text2: #9a9080;
+    --text3: #5a5448;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .logo {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(212,160,23,0.4);
+  }
+  .logo span {
+    color: var(--text2);
+    font-weight: 400;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+  .topbar-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(192,57,43,0.12);
+    border: 1px solid rgba(192,57,43,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #e74c3c;
+    letter-spacing: 0.04em;
+  }
+  .topbar-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #e74c3c;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* ── Layout ── */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 3rem;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2.5rem 1.5rem;
+    background: linear-gradient(135deg, rgba(192,57,43,0.07), rgba(212,160,23,0.05));
+    border: 1px solid rgba(212,160,23,0.2);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 30px rgba(212,160,23,0.3);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .hero-sub {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto 1.25rem;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .hero-stat-val {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .hero-stat-lbl {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .hero-stat-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--border);
+    align-self: center;
+  }
+
+  /* ── Instruction strip ── */
+  .instruction-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .instruction-strip span { color: var(--gold); font-size: 14px; }
+
+  /* ── Accordion ── */
+  .bacc-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .bacc-item:hover { border-color: var(--border2); }
+  .bacc-item.open {
+    border-color: rgba(212,160,23,0.35);
+    box-shadow: 0 0 0 1px rgba(212,160,23,0.08);
+  }
+  .bacc-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .bacc-header:hover { background: var(--bg3); }
+  .bacc-item.open .bacc-header { background: var(--bg3); }
+  .bacc-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(212,160,23,0.1);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .bacc-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+  }
+  .bacc-chevron {
+    font-size: 10px;
+    color: var(--text3);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+  .bacc-item.open .bacc-chevron { transform: rotate(180deg); }
+  .bacc-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .bacc-divider { height: 1px; background: var(--border); margin: 0 16px; }
+  .bacc-inner {
+    padding: 16px 16px 18px;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.75;
+  }
+  .bacc-inner p { margin-bottom: 9px; }
+  .bacc-inner p:last-child { margin-bottom: 0; }
+  .bacc-inner strong { color: var(--text); font-weight: 500; }
+  .bacc-inner em { color: var(--text3); font-style: italic; }
+  .bacc-inner ul { padding-left: 1.2rem; margin: 6px 0 9px; }
+  .bacc-inner li { margin-bottom: 5px; }
+
+  /* ── Step list used in "what to do" section ── */
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .step-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(212,160,23,0.1);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+    font-family: 'Cinzel', serif;
+  }
+  .step-text { font-size: 13px; color: var(--text2); line-height: 1.65; flex: 1; }
+  .step-text strong { color: var(--text); font-weight: 500; }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.8;
+  }
+  .footer a { color: var(--gold-dark); text-decoration: none; }
+  .footer a:hover { color: var(--gold); }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="logo">⚔ Rush Royale<span>Community Movement</span></div>
+  <div class="topbar-badge">BOYCOTT ACTIVE</div>
+</div>
+
+<div class="content">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Official Community Announcement</div>
+    <div class="hero-title">🚫 Rush Royale Boycott</div>
+    <div class="hero-sub">
+      Clan leaders and key figures across the Rush Royale community have come together to coordinate a spending boycott. Read below to understand why, when, and how you can stand with us.
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val">150+</div>
+        <div class="hero-stat-lbl">Clans United</div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">1</div>
+        <div class="hero-stat-lbl">Goal</div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">0</div>
+        <div class="hero-stat-lbl">Spending</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instruction strip -->
+  <div class="instruction-strip">
+    <span>▼</span>
+    Click any section to expand — hover to highlight.
+  </div>
+
+  <!-- Accordion 1 -->
+  <div class="bacc-item" id="b1">
+    <div class="bacc-header" onclick="baccToggle('b1')">
+      <div class="bacc-icon">❓</div>
+      <div class="bacc-title">Why are we boycotting the new unit?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="b1-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>We all fell in love with Rush Royale or the community surrounding it and want it desperately to succeed. Many people have tried to pass on amazing suggestions and feedback through official channels — the main Discord, the Roundtable — but for the most part these have fallen on deaf ears.</p>
+        <p>Many, if not all of us, know someone who has quit the game because they either can't or don't want to spend just to enjoy it.</p>
+        <p>We have exhausted all formal discussion forums but receive nothing in return other than being palmed off with "it's been passed on." <strong>This boycott intends to target where the developers care most — their bottom line.</strong></p>
+        <p>We hope that by boycotting the unit we will elicit some degree of accountability and genuine dialogue between developers and the community as a whole, to bring about meaningful improvements for the long-term health of the game.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion 2 -->
+  <div class="bacc-item" id="b2">
+    <div class="bacc-header" onclick="baccToggle('b2')">
+      <div class="bacc-icon">📅</div>
+      <div class="bacc-title">When is this planned to go ahead?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="b2-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>The planned beginning of the boycott is on the <strong>release of the new unit</strong>. We ask that you encourage your community to not spend or participate in the Festival of Talents. This means:</p>
+        <ul>
+          <li>No buying the new unit</li>
+          <li>Minimal — and if possible zero — spending for the entire duration of the event</li>
+        </ul>
+        <p>More information will be provided towards the conclusion of the event on whether the spending boycott continues after the Festival of Talents, if meaningful dialogue hasn't been opened.</p>
+        <p>We want to see <strong>genuine commitments to improvements in the game with timelines that are both reasonable and not just "soon"</strong> — as we have been told many times before.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion 3 -->
+  <div class="bacc-item" id="b3">
+    <div class="bacc-header" onclick="baccToggle('b3')">
+      <div class="bacc-icon">✊</div>
+      <div class="bacc-title">What can you do right now to support this movement?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="b3-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <div class="step-row">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Revert your profile cosmetics</strong> to the default Bombardier profile picture and remove all cosmetics such as badges, titles, decorations, and frames. This acts as a show of how coordinated and unified the community is in banding together. <em>Note: CCs are exempt from the blank profile movement and have been excused from visible participation due to threats from the developer programme.</em></div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Stop spending when the Festival of Talents starts.</strong> If you wish to purchase the season pass or future event passes like Mirror Match or Masters Tournament, buy the platinum <em>beforehand</em> to minimise spending as much as possible during the event period.</div>
+        </div>
+        <div class="step-row">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Spread the word</strong> to every player you can reach. Many players aren't active on Discord or reachable through easy channels — the more people who know, the stronger our message.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion 4 -->
+  <div class="bacc-item" id="b4">
+    <div class="bacc-header" onclick="baccToggle('b4')">
+      <div class="bacc-icon">⚔️</div>
+      <div class="bacc-title">What if I face Moloch in PvP and feel compelled to spend?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="b4-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>We are doing our very best to spread the word, but there are many players who aren't involved in Discord or who are not reachable through easy-to-find channels. So whilst we want to make sure as few Molochs appear in PvP as possible, it is impossible to guarantee none will.</p>
+        <p><strong>All we ask is that you resist the temptation for this season.</strong> Eventually the unit will be nerfed and then another unit will be released. If you're normally a spender and feel you're missing out — remember that leaderboards won't carry the same sense of accomplishment if the game's player base has left en masse.</p>
+        <p>For clans: if some members can't be contacted or choose not to participate, <strong>we are not asking for them to be removed</strong>. We cannot force anyone. All we can do is provide the reasoning — whilst we hope most will agree, some may not and that's the reality.</p>
+        <p>As a community lead, <strong>leading by example</strong> will go further than anything else. If you are passionate about this, your community will see it and are more likely to engage positively.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion 5 -->
+  <div class="bacc-item" id="b5">
+    <div class="bacc-header" onclick="baccToggle('b5')">
+      <div class="bacc-icon">📋</div>
+      <div class="bacc-title">What are we actually asking for?</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="b5-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>An open letter is being sent to the developers outlining in detail the points raised here and requesting reasonable, tangible improvements for the game's long-term health.</p>
+        <p>We are not asking for the moon. <strong>We want to be treated as the amazing community we actually are</strong> — not as a revenue source to be ignored until the next unit drops.</p>
+        <p>Specifically we want to see genuine commitments with real timelines, meaningful engagement from the development team, and acknowledgement that the community's feedback has value.</p>
+        <p><em>Open letter link — coming soon.</em></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accordion 6 -->
+  <div class="bacc-item" id="b6">
+    <div class="bacc-header" onclick="baccToggle('b6')">
+      <div class="bacc-icon">🤝</div>
+      <div class="bacc-title">Conclusion — stand as one</div>
+      <div class="bacc-chevron">▼</div>
+    </div>
+    <div class="bacc-body" id="b6-body">
+      <div class="bacc-divider"></div>
+      <div class="bacc-inner">
+        <p>Whilst this is a lot of information, it is important — and potentially our only real shot to make some impact.</p>
+        <p>Are we likely to immediately get everything we want? No. But should that be a reason to give up? Absolutely not.</p>
+        <p>We are incredible individuals who have all come together for the good of the game. <strong>We represent over 150 clans</strong> and together we can bring about real change when we work as one.</p>
+        <p>Time to put down the wallet and pick up the metaphorical pitchfork — because we are going to do this together. If we stand as one we can and will send a strong message, so please stand with us as we try to make this game better for the good of every single one of our community members.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>This is an unofficial community movement and is not affiliated with or endorsed by the Rush Royale development team.</p>
+    <p style="margin-top:6px">Coordinated by clan leaders across the Rush Royale community &nbsp;·&nbsp; <strong style="color:var(--text3)">150+ clans united</strong></p>
+  </div>
+
+</div>
+
+<script>
+function baccToggle(id) {
+  const item = document.getElementById(id);
+  const body = document.getElementById(id + '-body');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.bacc-item').forEach(i => {
+    i.classList.remove('open');
+    const b = document.getElementById(i.id + '-body');
+    if (b) b.style.maxHeight = '0';
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+}
+</script>
+</body>
+</html>
